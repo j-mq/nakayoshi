@@ -1,18 +1,14 @@
 import React from 'react';
-
-import { useState, useRef } from 'react';
-
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/firestore';
 import 'firebase/compat/auth';
-
+import 'firebase/compat/firestore';
+import { addMessage } from '@/firebase/collections/messages';
+import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
+import { signInWithGoogle, signOutFromGoogle } from '@/firebase/auth/login';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
-import { signInWithGoogle, signOutFromGoogle } from '@/firebase/auth/login';
+import { useState, useRef } from 'react';
 import firebaseApp, { db } from '@/firebase/config';
-import { getAuth } from 'firebase/auth';
-import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore';
-import { addMessage } from '@/firebase/collections/messages';
 
 const auth = getAuth(firebaseApp);
 
