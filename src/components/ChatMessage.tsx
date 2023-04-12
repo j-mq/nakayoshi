@@ -9,7 +9,6 @@ type ChatRoomProps = {
 
 const ChatRoom = ({ message, auth }: ChatRoomProps) => {
   const { text, uid, photoURL } = message;
-  console.log('the message', message);
 
   const messageClass = uid === auth.currentUser?.uid ? 'sent' : 'received';
 
