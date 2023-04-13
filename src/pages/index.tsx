@@ -9,6 +9,7 @@ import Logout from '@/components/Logout';
 import { getUserData } from '@/firebase/collections/users';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import { signOutFromGoogle } from '@/firebase/auth/login';
 
 const auth = getAuth(firebaseApp);
 
@@ -36,6 +37,11 @@ const App = () => {
     router.push('/settings');
   };
 
+  const signOut = async () => {
+    await signOutFromGoogle();
+    setRegisteredUser(undefined);
+  };
+
   return (
     <div className='App'>
       {loading ? (
@@ -44,8 +50,12 @@ const App = () => {
         <>
           <header>
             <h1>⚛️🔥💬</h1>
-            <button onClick={goToSettings}>Settings</button>
-            <Logout auth={auth} />
+            {registeredUser && (
+              <>
+                <button onClick={goToSettings}>Settings</button>
+                <Logout signOut={signOut} />
+              </>
+            )}
           </header>
           <section>
             {registeredUser ? (

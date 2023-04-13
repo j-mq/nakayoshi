@@ -2,20 +2,14 @@ import { signInWithGoogle, signOutFromGoogle } from '@/firebase/auth/login';
 import { useRouter } from 'next/router';
 
 type LogoutProps = {
-  auth: any;
+  signOut: () => void;
 };
 
-const Logout = ({ auth }: LogoutProps) => {
-  const signOut = async () => {
-    await signOutFromGoogle();
-  };
-
+const Logout = ({ signOut }: LogoutProps) => {
   return (
-    auth.currentUser && (
-      <button className='sign-out' onClick={() => signOut()}>
-        Sign Out
-      </button>
-    )
+    <button className='sign-out' onClick={signOut}>
+      Sign Out
+    </button>
   );
 };
 
