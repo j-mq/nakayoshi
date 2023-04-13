@@ -10,6 +10,7 @@ import { getUser } from '@/firebase/collections/users';
 import { useEffect } from 'react';
 import { collection, query, where } from 'firebase/firestore';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
+import UserSettings from '@/components/UserSettings';
 
 const auth = getAuth(firebaseApp);
 
@@ -30,13 +31,27 @@ const App = () => {
 
   console.log('registeredUser', registeredUser);
 
+  const isUserRegistered = () => {
+    return user && registeredUser && registeredUser[0];
+  };
+
+  //TODO: be able to update user settings
+
   return (
     <div className='App'>
       <header>
         <h1>⚛️🔥💬</h1>
         <Logout auth={auth} />
       </header>
-      <section>{user ? <ChatRoom auth={auth} /> : <Login />}</section>
+      <section>
+        {isUserRegistered() ? (
+          <ChatRoom auth={auth} />
+        ) : user ? (
+          <UserSettings auth={auth} />
+        ) : (
+          <Login />
+        )}
+      </section>
     </div>
   );
 };
