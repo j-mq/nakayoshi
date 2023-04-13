@@ -1,11 +1,26 @@
 import { db } from '../config';
-import { getDoc, doc, collection, addDoc, updateDoc } from 'firebase/firestore';
+import {
+  getDoc,
+  doc,
+  collection,
+  addDoc,
+  updateDoc,
+  getDocs,
+  query,
+  where,
+} from 'firebase/firestore';
 
 const usersCollection = collection(db, 'users');
 
-export const getUser = async (uid: string) => {
-  const user = await getDoc(doc(db, 'users', uid));
-  return user;
+export const getUserData = async (uid: string) => {
+  const user = await getDocs(query(usersCollection, where('uid', '==', uid)));
+
+  if (user.empty) {
+    return undefined;
+  } else {
+    const userData = user.docs[0].data();
+    return userData;
+  }
 };
 
 export const updateOrCreateUser = async (
@@ -13,17 +28,14 @@ export const updateOrCreateUser = async (
   avatarUrl: string,
   nickname: string
 ) => {
-  //Check if user already exists
-  const user = await getUser(uid);
-  if (user.exists()) {
-    //Update user
-    await updateDoc(doc(usersCollection, uid), {
+  const user = await getDocs(query(usersCollection, where('uid', '==', uid)));
+
+  if (user.docs[0].data()) {
+    await updateDoc(doc(usersCollection, user.docs[0].id), {
       avatarUrl,
       nickname,
     });
-  }
-  //Create user
-  else {
+  } else {
     await addDoc(usersCollection, {
       uid,
       avatarUrl,

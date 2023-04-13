@@ -36,8 +36,8 @@ const ChatRoom = ({ auth }: ChatRoomProps) => {
       Getting there
       <div>
         {messages &&
-          messages.map((msg: any) => (
-            <ChatMessage key={msg.id} message={msg} auth={auth} />
+          messages.map((msg: any, index: number) => (
+            <ChatMessage key={`${msg.id}-${index}`} message={msg} auth={auth} />
           ))}
         <div ref={dummy}></div>
       </div>
