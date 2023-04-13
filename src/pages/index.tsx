@@ -16,12 +16,16 @@ const App = () => {
   const [user, loading, error] = useAuthState(auth as any);
   const router = useRouter();
 
+  const [registeredUser, setRegisteredUser] = useState<any>(undefined);
+
   useEffect(() => {
     const checkUserRegistration = async () => {
       if (user?.uid) {
         const registeredUser = await getUserData(user.uid);
         if (!registeredUser) {
           router.push('/settings');
+        } else {
+          setRegisteredUser(registeredUser);
         }
       }
     };
@@ -43,7 +47,13 @@ const App = () => {
             <button onClick={goToSettings}>Settings</button>
             <Logout auth={auth} />
           </header>
-          <section>{user ? <ChatRoom auth={auth} /> : <Login />}</section>
+          <section>
+            {registeredUser ? (
+              <ChatRoom registeredUser={registeredUser} />
+            ) : (
+              <Login />
+            )}
+          </section>
         </>
       )}
     </div>

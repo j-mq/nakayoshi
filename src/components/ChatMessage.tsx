@@ -4,13 +4,13 @@ type ChatRoomProps = {
     uid: string;
     photoURL: string;
   };
-  auth: any;
+  registeredUser: any;
 };
 
-const ChatRoom = ({ message, auth }: ChatRoomProps) => {
+const ChatRoom = ({ message, registeredUser }: ChatRoomProps) => {
   const { text, uid, photoURL } = message;
 
-  const messageClass = uid === auth.currentUser?.uid ? 'sent' : 'received';
+  const messageClass = uid === registeredUser.uid ? 'sent' : 'received';
 
   return (
     <div className={`message ${messageClass}`}>

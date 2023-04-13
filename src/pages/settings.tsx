@@ -10,10 +10,10 @@ const auth = getAuth(firebaseApp);
 
 const UserSettings = () => {
   const router = useRouter();
-  const [user] = useAuthState(auth as any);
   const [avatarURL, setAvatarURL] = useState('');
   const [nickname, setNickname] = useState('');
   const [userId, setUserId] = useState('');
+  const [currentFile, setCurrentFile] = useState<File | undefined>(undefined);
 
   //Check if user is logged in else redirect to index
   useEffect(() => {
@@ -29,7 +29,6 @@ const UserSettings = () => {
           setUserId(uid);
         } else {
           const { uid, avatarUrl, nickname } = registeredUser;
-          console.log('the registered user data', uid, avatarUrl, nickname);
           setAvatarURL(avatarUrl);
           setNickname(nickname);
           setUserId(uid);
@@ -49,6 +48,7 @@ const UserSettings = () => {
       reader.onload = () => {
         setAvatarURL(reader.result as string);
       };
+      setCurrentFile(file);
     }
   };
 
@@ -57,7 +57,7 @@ const UserSettings = () => {
   };
 
   const updateUser = async () => {
-    await updateOrCreateUser(userId, avatarURL, nickname);
+    await updateOrCreateUser(userId, nickname, avatarURL, currentFile);
     router.push('/');
   };
 
