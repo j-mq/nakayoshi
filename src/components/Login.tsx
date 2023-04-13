@@ -4,7 +4,11 @@ type SignInProps = {};
 
 const SignIn = () => {
   const signIn = async () => {
-    await signInWithGoogle();
+    try {
+      await signInWithGoogle();
+    } catch (error) {
+      console.error('Error signing in with Google:', error);
+    }
   };
 
   return (
