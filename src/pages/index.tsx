@@ -13,18 +13,27 @@ import { signInWithGoogle, signOutFromGoogle } from '@/firebase/auth/login';
 import styled from 'styled-components';
 import ActionButton from '@/components/ActionButton';
 
-const Container = styled.div`
+const Container = styled.main`
   height: 100vh;
   width: 100vw;
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
-  overflow-y: auto;
+  overflow-y: hidden;
   justify-items: flex-start;
   align-items: center;
-  padding: 16px;
   background: ${(props) => props.theme.background};
-  overflow: hidden;
+`;
+
+const IntroContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 16px;
+  overflow-y: auto;
 `;
 
 const Logo = styled.div`
@@ -35,7 +44,6 @@ const Logo = styled.div`
   background: white;
   border-radius: 50%;
 
-  //mobile
   @media (max-width: 768px) {
     width: 100%;
     padding-bottom: 100%;
@@ -46,7 +54,6 @@ const Title = styled.h1`
   font-weight: 700;
   color: ${(props) => props.theme.primaryLighter};
   margin: 0;
-  margin-top: 16px;
   font-family: ${(props) => props.theme.secondaryFont};
   font-size: 48px;
   margin: 16px 0px;
@@ -97,25 +104,17 @@ const App = () => {
       ) : (
         <>
           {registeredUser ? (
-            <>
-              <header>
-                <h1>⚛️🔥💬</h1>
-                {registeredUser && (
-                  <>
-                    <button onClick={goToSettings}>Settings</button>
-                    <Logout signOut={signOut} />
-                  </>
-                )}
-              </header>
-
-              <ChatRoom registeredUser={registeredUser} />
-            </>
+            <ChatRoom
+              registeredUser={registeredUser}
+              goToSettings={goToSettings}
+              signOut={signOut}
+            />
           ) : (
-            <>
+            <IntroContainer>
               <Logo />
               <Title>Nakayoshi</Title>
               <ActionButton onClick={signIn}>Login</ActionButton>
-            </>
+            </IntroContainer>
           )}
         </>
       )}
