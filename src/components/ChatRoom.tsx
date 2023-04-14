@@ -7,6 +7,7 @@ import ChatMessage from '@/components/ChatMessage';
 import { getUsers } from '@/firebase/collections/users';
 import Logout from './Logout';
 import styled from 'styled-components';
+import IconButton from './IconButton';
 
 const ChatRoomContainer = styled.div`
   display: grid;
@@ -141,12 +142,8 @@ const ChatRoom = ({ registeredUser, goToSettings, signOut }: ChatRoomProps) => {
   return (
     <ChatRoomContainer>
       <OptionsArea>
-        {registeredUser && (
-          <>
-            <button onClick={goToSettings}>Settings</button>
-            <Logout signOut={signOut} />
-          </>
-        )}
+        <IconButton onClick={goToSettings}>settings</IconButton>
+        <IconButton onClick={signOut}>logout</IconButton>
       </OptionsArea>
       <MessagesArea ref={messagesAreaRef}>
         {processedMessages.length > 0 &&

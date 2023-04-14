@@ -1,7 +1,7 @@
 import { signInWithGoogle } from '@/firebase/auth/login';
 import styled from 'styled-components';
 
-const ActionButtonStyle = styled.button`
+const IconButtonStyle = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -29,17 +29,17 @@ const ActionButtonStyle = styled.button`
   }
 `;
 
-type ActionButtonProps = {
+type IconButtonProps = {
   onClick: () => void;
   children: React.ReactNode;
 };
 
-const ActionButton = ({ onClick, children }: ActionButtonProps) => {
+const IconButton = ({ onClick, children }: IconButtonProps) => {
   return (
-    <ActionButtonStyle className='sign-in' onClick={onClick}>
-      {children}
-    </ActionButtonStyle>
+    <IconButtonStyle className='sign-in' onClick={onClick}>
+      <span className='material-symbols-outlined'>{children}</span>
+    </IconButtonStyle>
   );
 };
 
-export default ActionButton;
+export default IconButton;

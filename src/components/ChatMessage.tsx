@@ -81,7 +81,6 @@ const Body = styled.div<StyleProps>`
   border-radius: 24px;
   padding: ${(props) =>
     props.isSelf ? '4px 32px 32px 32px' : '4px 32px 32px 32px'};
-  margin: -50px 0 0 50px;
   margin: ${(props) =>
     props.isSelf ? '-50px 50px 0px 0px' : '-50px 0px 0px 50px'};
   position: relative;
@@ -89,8 +88,10 @@ const Body = styled.div<StyleProps>`
     props.isSelf ? props.theme.primaryDarker : props.theme.secondaryDarker};
 
   @media (max-width: 768px) {
-    margin: -40px 0 0 40px;
-    padding: 4px 24px 24px 24px;
+    margin: ${(props) =>
+      props.isSelf ? '-40px 40px 0px 0px' : '-40px 0px 0px 40px'};
+    padding: ${(props) =>
+      props.isSelf ? '4px 24px 24px 24px' : '4px 24px 24px 24px'};
   }
 `;
 
@@ -154,8 +155,14 @@ type ChatMessageProps = {
 const ChatMessage = ({ message, registeredUser }: ChatMessageProps) => {
   const { text, uid, photoURL, nickname, createdAt } = message;
 
-  const date = new Date(createdAt.seconds * 1000);
-  const dateString = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+  const getDate = (createdAt: any) => {
+    if (createdAt) {
+      const date = new Date(createdAt.seconds * 1000);
+      return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+    } else {
+      return '';
+    }
+  };
 
   const isSelf = uid === registeredUser.uid;
 
@@ -168,7 +175,7 @@ const ChatMessage = ({ message, registeredUser }: ChatMessageProps) => {
         <NameTag isSelf={isSelf}>{nickname}</NameTag>
       </TopContainer>
       <Body isSelf={isSelf}>
-        <DateStamp isSelf={isSelf}>{dateString}</DateStamp>
+        <DateStamp isSelf={isSelf}>{getDate(createdAt)}</DateStamp>
         <Message>{text}</Message>
         <Tail isSelf={isSelf} />
       </Body>
