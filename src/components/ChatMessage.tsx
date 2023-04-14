@@ -1,19 +1,21 @@
 import styled from 'styled-components';
 
-const ChatMessageContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-`;
-
-const TopContainer = styled.div`
-  display: flex;
-  align-items: flex-start;
-`;
-
 type StyleProps = {
   isSelf: boolean;
 };
+
+const ChatMessageContainer = styled.div<StyleProps>`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: ${(props) => (props.isSelf ? 'flex-end' : 'flex-start')};
+`;
+
+const TopContainer = styled.div<StyleProps>`
+  display: flex;
+  align-items: flex-start;
+  flex-direction: ${(props) => (props.isSelf ? 'row-reverse' : 'row')};
+`;
 
 const ImageContainer = styled.div<StyleProps>`
   width: 90px;
@@ -41,7 +43,8 @@ const Image = styled.img`
 
 const NameTag = styled.div<StyleProps>`
   height: 45px;
-  padding: 8px 16px 8px 40px;
+  padding: ${(props) =>
+    props.isSelf ? '8px 40px 8px 16px' : '8px 16px 8px 40px'};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -49,29 +52,38 @@ const NameTag = styled.div<StyleProps>`
     props.isSelf ? props.theme.primaryDark : props.theme.secondaryDark};
   color: ${(props) =>
     props.isSelf ? props.theme.primaryLighter : props.theme.secondaryLighter};
-  margin-left: -40px;
-  border-radius: 0 8px 48px 0px;
+  margin-right: ${(props) => (props.isSelf ? '-40px' : '0px')};
+  margin-left: ${(props) => (props.isSelf ? '0px' : '-40px')};
+  border-radius: ${(props) =>
+    props.isSelf ? '8px 0 0 48px' : '0 8px 48px 0px'};
   font-weight: 600;
   font-size: 18px;
 
   @media (max-width: 768px) {
     height: 35px;
-    margin-left: -30px;
-    padding: 6px 12px 6px 30px;
+    margin-right: ${(props) => (props.isSelf ? '-30px' : '0px')};
+    margin-left: ${(props) => (props.isSelf ? '0px' : '-30px')};
+    padding: ${(props) =>
+      props.isSelf ? '6px 30px 6px 12px' : '6px 12px 6px 30px'};
     font-size: 14px;
   }
 `;
 
 const Body = styled.div<StyleProps>`
+  min-width: 200px;
   width: fit-content;
   max-width: 66%;
   height: fit-content;
+  max-height: 200px;
   min-height: 80px;
   background: ${(props) =>
     props.isSelf ? props.theme.primaryLight : props.theme.secondaryLight};
   border-radius: 24px;
-  padding: 4px 32px 32px 32px;
+  padding: ${(props) =>
+    props.isSelf ? '4px 32px 32px 32px' : '4px 32px 32px 32px'};
   margin: -50px 0 0 50px;
+  margin: ${(props) =>
+    props.isSelf ? '-50px 50px 0px 0px' : '-50px 0px 0px 50px'};
   position: relative;
   color: ${(props) =>
     props.isSelf ? props.theme.primaryDarker : props.theme.secondaryDarker};
@@ -84,40 +96,48 @@ const Body = styled.div<StyleProps>`
 
 const Tail = styled.div<StyleProps>`
   position: absolute;
-  right: -20px;
-  border-radius: 24px 8px 24px 0px;
   top: -20px;
+  border-radius: ${(props) =>
+    props.isSelf ? '8px 24px 0px 24px' : '24px 8px 24px 0px'};
+  right: ${(props) => (props.isSelf ? 'auto' : '-20px')};
+  left: ${(props) => (props.isSelf ? '-20px' : 'auto')};
+
   width: 40px;
   height: 40px;
   background: ${(props) =>
     props.isSelf ? props.theme.primaryLight : props.theme.secondaryLight};
 
   @media (max-width: 768px) {
-    right: -15px;
     top: -15px;
     width: 30px;
     height: 30px;
-    border-radius: 18px 6px 18px 0px;
+    border-radius: ${(props) =>
+      props.isSelf ? '6px 18px 0px 18px' : '18px 6px 18px 0px'};
+    right: ${(props) => (props.isSelf ? 'auto' : '-15px')};
+    left: ${(props) => (props.isSelf ? '-15px' : 'auto')};
   }
-
-  z-index: 0;
 `;
 
-const DateStamp = styled.div`
+const DateStamp = styled.div<StyleProps>`
   color: inherit;
   font-size: 12px;
   text-align: left;
   margin-bottom: 16px;
-  margin-left: 16px;
+  margin-left: ${(props) => (props.isSelf ? '0px' : '16px')};
+  margin-right: ${(props) => (props.isSelf ? '16px' : '0px')};
   @media (max-width: 768px) {
     margin-bottom: 12px;
-    margin-left: 12px;
+    margin-left: ${(props) => (props.isSelf ? '0px' : '12px')};
+    margin-right: ${(props) => (props.isSelf ? '12px' : '0px')};
   }
 `;
 
 const Message = styled.div`
   color: inherit;
   font-size: 16px;
+  height: 100%;
+  max-height: 150px;
+  overflow: auto;
 `;
 
 type ChatMessageProps = {
@@ -134,23 +154,21 @@ type ChatMessageProps = {
 const ChatMessage = ({ message, registeredUser }: ChatMessageProps) => {
   const { text, uid, photoURL, nickname, createdAt } = message;
 
-  const messageClass = uid === registeredUser.uid ? 'sent' : 'received';
-
   const date = new Date(createdAt.seconds * 1000);
   const dateString = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
 
   const isSelf = uid === registeredUser.uid;
 
   return (
-    <ChatMessageContainer>
-      <TopContainer>
+    <ChatMessageContainer isSelf={isSelf}>
+      <TopContainer isSelf={isSelf}>
         <ImageContainer isSelf={isSelf}>
           <Image src={photoURL} alt={`user-${uid}`}></Image>
         </ImageContainer>
         <NameTag isSelf={isSelf}>{nickname}</NameTag>
       </TopContainer>
       <Body isSelf={isSelf}>
-        <DateStamp>{dateString}</DateStamp>
+        <DateStamp isSelf={isSelf}>{dateString}</DateStamp>
         <Message>{text}</Message>
         <Tail isSelf={isSelf} />
       </Body>
