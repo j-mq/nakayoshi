@@ -9,14 +9,6 @@ import Logout from './Logout';
 import styled from 'styled-components';
 
 const ChatRoomContainer = styled.div`
-  /* display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  position: relative; */
-
   display: grid;
   grid-template-rows: auto 1fr auto;
   grid-template-columns: 1fr;
@@ -55,6 +47,7 @@ const MessagesArea = styled.div`
   overflow-y: scroll;
   overflow-x: hidden;
   padding: 16px;
+  gap: 16px;
 `;
 
 const InputArea = styled.div`
@@ -91,6 +84,8 @@ const ChatRoom = ({ registeredUser, goToSettings, signOut }: ChatRoomProps) => {
     limit(25)
   );
 
+  const messagesAreaRef = useRef<HTMLDivElement>(null);
+
   const [messages, loading] = useCollectionData(messagesQuery, {
     idField: 'id',
   } as any);
@@ -98,7 +93,6 @@ const ChatRoom = ({ registeredUser, goToSettings, signOut }: ChatRoomProps) => {
   useEffect(() => {
     const getProcessedMessages = async () => {
       if (messages) {
-        //Get all uids from messages
         const uids = messages.map((msg: any) => msg.uid);
 
         // @ts-ignore
@@ -106,23 +100,30 @@ const ChatRoom = ({ registeredUser, goToSettings, signOut }: ChatRoomProps) => {
 
         const users = await getUsers(uniqueUids);
 
-        const newMessages = messages.map((msg: any) => {
-          const user = users.find((user: any) => user.uid === msg.uid);
-          if (user) {
-            return {
-              ...msg,
-              photoURL: user.avatarUrl,
-              nickname: user.nickname,
-            };
-          } else {
-            return msg;
-          }
-        });
+        const newMessages = messages
+          .map((msg: any) => {
+            const user = users.find((user: any) => user.uid === msg.uid);
+            if (user) {
+              return {
+                ...msg,
+                photoURL: user.avatarUrl,
+                nickname: user.nickname,
+              };
+            } else {
+              return msg;
+            }
+          })
+          .reverse();
+
         setProcessedMessages(newMessages);
       }
     };
     getProcessedMessages();
   }, [messages]);
+
+  useEffect(() => {
+    messagesAreaRef.current?.scrollTo(0, messagesAreaRef.current.scrollHeight);
+  }, []);
 
   const [formValue, setFormValue] = useState('');
 
@@ -134,7 +135,7 @@ const ChatRoom = ({ registeredUser, goToSettings, signOut }: ChatRoomProps) => {
       await addMessage(formValue, uid, avatarUrl);
     }
     setFormValue('');
-    // dummy.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesAreaRef.current?.scrollTo(0, messagesAreaRef.current.scrollHeight);
   };
 
   return (
@@ -147,7 +148,7 @@ const ChatRoom = ({ registeredUser, goToSettings, signOut }: ChatRoomProps) => {
           </>
         )}
       </OptionsArea>
-      <MessagesArea>
+      <MessagesArea ref={messagesAreaRef}>
         {processedMessages.length > 0 &&
           processedMessages.map((msg: any, index: number) => (
             <ChatMessage

@@ -8,12 +8,19 @@ export const theme = {
   secondaryFont: `'DynaPuff', cursive`,
   dropShadow: '0px 4px 8px rgba(0, 0, 0, 0.25)',
 
+  primaryDark: '#D98181',
+  secondaryDark: '#7F7FD3',
+
+  secondaryLighter: '#F2F2FF',
+
+  secondaryLight: '#CCCCF4',
+
+  secondaryDarker: '##383851',
+  primaryDarker: '#573434',
+
   primary: '#79A2CB',
-  primaryDark: '#30679F',
-  primaryDarker: '#314560',
   primaryDarkest: '#061324',
   secondary: '#BFFF80',
-  secondaryLighter: '#A5FF4D',
   overlay: 'rgba(48, 103, 159, 0.8)',
   overlayDark: 'rgba(6, 19, 36, 0.75)',
   shadowLevel2: '0px 4px 8px rgba(0, 0, 0, 0.50)',
