@@ -1,9 +1,10 @@
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 import { collection, query, orderBy, limit } from 'firebase/firestore';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { db } from '@/firebase/config';
 import { addMessage } from '@/firebase/collections/messages';
 import ChatMessage from '@/components/ChatMessage';
+import { getUsers } from '@/firebase/collections/users';
 
 type ChatRoomProps = {
   registeredUser: any;
@@ -12,6 +13,8 @@ type ChatRoomProps = {
 const ChatRoom = ({ registeredUser }: ChatRoomProps) => {
   const { uid, avatarUrl, nickname } = registeredUser;
 
+  const [processedMessages, setProcessedMessages] = useState<any[]>([]);
+
   const messagesCollection = collection(db, 'messages');
   const messagesQuery = query(
     messagesCollection,
@@ -19,7 +22,38 @@ const ChatRoom = ({ registeredUser }: ChatRoomProps) => {
     limit(25)
   );
 
-  const [messages] = useCollectionData(messagesQuery, { idField: 'id' } as any);
+  const [messages, loading] = useCollectionData(messagesQuery, {
+    idField: 'id',
+  } as any);
+
+  useEffect(() => {
+    const getProcessedMessages = async () => {
+      if (messages) {
+        //Get all uids from messages
+        const uids = messages.map((msg: any) => msg.uid);
+
+        // @ts-ignore
+        const uniqueUids = [...new Set(uids)];
+
+        const users = await getUsers(uniqueUids);
+
+        const newMessages = messages.map((msg: any) => {
+          const user = users.find((user: any) => user.uid === msg.uid);
+          if (user) {
+            return {
+              ...msg,
+              photoURL: user.avatarUrl,
+              nickname: user.nickname,
+            };
+          } else {
+            return msg;
+          }
+        });
+        setProcessedMessages(newMessages);
+      }
+    };
+    getProcessedMessages();
+  }, [messages]);
 
   const [formValue, setFormValue] = useState('');
 
@@ -38,8 +72,8 @@ const ChatRoom = ({ registeredUser }: ChatRoomProps) => {
     <>
       Getting there
       <div>
-        {messages &&
-          messages.map((msg: any, index: number) => (
+        {processedMessages.length > 0 &&
+          processedMessages.map((msg: any, index: number) => (
             <ChatMessage
               key={`${msg.id}-${index}`}
               message={msg}
