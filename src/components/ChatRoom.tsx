@@ -30,6 +30,8 @@ const OptionsArea = styled.div`
   height: fit-content;
   background: ${(props) => props.theme.primaryLight};
   padding: 24px;
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
+  z-index: 3;
 
   @media (max-width: 768px) {
     padding: 16px;
@@ -58,6 +60,8 @@ const InputArea = styled.div`
   max-height: 170px;
   background: ${(props) => props.theme.primaryLight};
   padding: 24px;
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
+  z-index: 3;
 
   @media (max-width: 768px) {
     padding: 16px;
@@ -67,7 +71,8 @@ const InputArea = styled.div`
 
 const InputForm = styled.form`
   display: flex;
-  flex-direction: column;
+  align-items: flex-end;
+  gap: 16px;
   width: 100%;
   height: fit-content;
   position: relative;
@@ -91,12 +96,6 @@ const MessageInput = styled.textarea`
     background: ${(props) => props.theme.primaryLighter};
     color: ${(props) => props.theme.primaryDarker};
   }
-`;
-
-const SubmitButtonPositioner = styled.div`
-  position: absolute;
-  right: 4px;
-  bottom: 4px;
 `;
 
 type ChatRoomProps = {
@@ -192,14 +191,12 @@ const ChatRoom = ({ registeredUser, goToSettings, signOut }: ChatRoomProps) => {
             value={messageValue}
             onChange={(e) => setMessageValue(e.target.value)}
           />
-          <SubmitButtonPositioner>
-            <IconButton
-              type='submit'
-              disabled={messageValue.length > 0 ? false : true}
-            >
-              Send
-            </IconButton>
-          </SubmitButtonPositioner>
+          <IconButton
+            type='submit'
+            disabled={messageValue.length > 0 ? false : true}
+          >
+            Send
+          </IconButton>
         </InputForm>
       </InputArea>
     </ChatRoomContainer>
