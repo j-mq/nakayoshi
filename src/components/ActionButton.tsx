@@ -13,6 +13,7 @@ const ActionButtonStyle = styled.button`
   cursor: pointer;
   font-weight: bold;
   box-shadow: ${(props) => props.theme.dropShadow};
+  width: 150px;
 
   @media (min-width: 768px) {
     :hover:enabled {

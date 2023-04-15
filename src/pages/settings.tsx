@@ -10,6 +10,7 @@ import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import ActionButton from '@/components/ActionButton';
 import IconButton from '@/components/IconButton';
+import { signOutFromGoogle } from '@/firebase/auth/login';
 
 const Container = styled.main`
   height: 100vh;
@@ -62,18 +63,22 @@ const IconButtonPositioner = styled.div`
 `;
 
 const NicknameInput = styled.input`
-  width: fit-content;
-  background: transparent;
+  width: 150px;
+  padding: 4px;
+  height: 50px;
+  background: ${(props) => props.theme.primaryDarker};
   border: none;
   border-radius: 8px;
-  padding: 0px;
   font-size: 32px;
-  height: 50px;
   font-family: ${(props) => props.theme.secondaryFont};
   color: ${(props) => props.theme.primaryLighter};
   outline: none;
   text-align: center;
   margin: 16px 0px 32px 0px;
+
+  :focus {
+    background: ${(props) => props.theme.primaryDark};
+  }
 `;
 
 const auth = getAuth(firebaseApp);
@@ -139,8 +144,21 @@ const UserSettings = () => {
     router.push('/');
   };
 
-  const cancelUpdate = () => {
+  const signOut = async () => {
+    await signOutFromGoogle();
     router.push('/');
+  };
+
+  const cancelUpdate = async () => {
+    router.push('/');
+    if (auth.currentUser) {
+      const registeredUser = await getUserData(auth.currentUser.uid);
+      if (registeredUser) {
+        router.push('/');
+      } else {
+        signOut();
+      }
+    }
   };
 
   const isUpdateButtonDisabled = () => {

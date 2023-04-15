@@ -10,7 +10,7 @@ import { useRouter } from 'next/router';
 import { signInWithGoogle, signOutFromGoogle } from '@/firebase/auth/login';
 import styled from 'styled-components';
 import ActionButton from '@/components/ActionButton';
-import Loading from '@/components/Loading';
+import JumpingRabbit from '@/components/JumpingRabbit';
 
 const Container = styled.main`
   height: 100vh;
@@ -108,7 +108,7 @@ const App = () => {
   return (
     <Container>
       {loading || firstLoading ? (
-        <Loading />
+        <JumpingRabbit type='loading' />
       ) : (
         <>
           {registeredUser ? (
@@ -119,7 +119,9 @@ const App = () => {
             />
           ) : (
             <IntroContainer>
-              <Logo />
+              <Logo>
+                <JumpingRabbit type='title' />
+              </Logo>
               <Title>Nakayoshi</Title>
               <ActionButton onClick={signIn}>Login</ActionButton>
             </IntroContainer>

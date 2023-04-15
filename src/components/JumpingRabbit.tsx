@@ -1,6 +1,10 @@
 import styled from 'styled-components';
 
-const LoadingContainer = styled.main`
+type JumpingRabbitContainerProps = {
+  type: 'loading' | 'title';
+};
+
+const JumpingRabbitContainer = styled.main<JumpingRabbitContainerProps>`
   position: absolute;
   top: 0;
   left: 0;
@@ -18,7 +22,10 @@ const LoadingContainer = styled.main`
   user-select: none;
 
   .material-symbols-outlined {
-    color: ${(props) => props.theme.primaryLighter};
+    color: ${(props) =>
+      props.type === 'loading'
+        ? props.theme.primaryLighter
+        : props.theme.primary};
     font-size: 100px;
     transform-origin: bottom;
     animation: jump 1s infinite;
@@ -40,14 +47,16 @@ const LoadingContainer = styled.main`
   }
 `;
 
-type LoadingProps = {};
+type JumpingRabbitProps = {
+  type: 'loading' | 'title';
+};
 
-const Loading = ({}: LoadingProps) => {
+const JumpingRabbit = ({ type }: JumpingRabbitProps) => {
   return (
-    <LoadingContainer>
+    <JumpingRabbitContainer type={type}>
       <div className='material-symbols-outlined'>cruelty_free</div>
-    </LoadingContainer>
+    </JumpingRabbitContainer>
   );
 };
 
-export default Loading;
+export default JumpingRabbit;

@@ -66,7 +66,7 @@ export const updateOrCreateUser = async (
     avatarUrl = await uploadAvatar(newAvatar);
   }
 
-  if (user.docs[0].data()) {
+  if (user.docs[0] && user.docs[0].data()) {
     await updateDoc(doc(usersCollection, user.docs[0].id), {
       avatarUrl,
       nickname,
