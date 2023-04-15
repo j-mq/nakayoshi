@@ -40,7 +40,7 @@ const Logo = styled.div`
   position: relative;
   width: 33%;
   padding-bottom: 33%;
-  background: white;
+  background: ${(props) => props.theme.primaryLighter};
   border-radius: 50%;
 
   @media (max-width: 768px) {
