@@ -16,26 +16,36 @@ const ActionButtonStyle = styled.button`
   box-shadow: ${(props) => props.theme.dropShadow};
 
   @media (min-width: 768px) {
-    :hover {
+    :hover:enabled {
       transform: scale(1.05);
       background: ${(props) => props.theme.primaryLight};
     }
   }
 
-  :active:hover {
+  :active:hover:enabled {
     transform: scale(0.95);
     box-shadow: none;
+  }
+
+  :disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
   }
 `;
 
 type ActionButtonProps = {
   onClick: () => void;
+  disabled?: boolean;
   children: React.ReactNode;
 };
 
-const ActionButton = ({ onClick, children }: ActionButtonProps) => {
+const ActionButton = ({ onClick, children, disabled }: ActionButtonProps) => {
   return (
-    <ActionButtonStyle className='sign-in' onClick={onClick}>
+    <ActionButtonStyle
+      className='sign-in'
+      onClick={onClick}
+      disabled={disabled ? disabled : false}
+    >
       {children}
     </ActionButtonStyle>
   );

@@ -5,7 +5,7 @@ export const theme = {
   primaryLight: '#F5CBCB',
 
   primaryGradient: 'linear-gradient(180deg, #F7A6A6 0%, #D98181 100%)',
-  secondaryFont: `'DynaPuff', cursive`,
+  secondaryFont: `'Mochiy Pop One', sans-serif`,
   dropShadow: '0px 4px 8px rgba(0, 0, 0, 0.25)',
 
   primaryDark: '#D98181',

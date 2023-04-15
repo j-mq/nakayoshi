@@ -190,6 +190,7 @@ const ChatRoom = ({ registeredUser, goToSettings, signOut }: ChatRoomProps) => {
           <MessageInput
             value={messageValue}
             onChange={(e) => setMessageValue(e.target.value)}
+            maxLength={255}
           />
           <IconButton
             type='submit'

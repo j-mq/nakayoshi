@@ -42,6 +42,7 @@ const Image = styled.img`
 `;
 
 const NameTag = styled.div<StyleProps>`
+  font-family: ${(props) => props.theme.secondaryFont};
   height: 45px;
   padding: ${(props) =>
     props.isSelf ? '8px 40px 8px 16px' : '8px 16px 8px 40px'};
