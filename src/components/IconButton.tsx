@@ -1,4 +1,3 @@
-import { signInWithGoogle } from '@/firebase/auth/login';
 import styled from 'styled-components';
 
 const IconButtonStyle = styled.button`

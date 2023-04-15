@@ -41,7 +41,7 @@ const OptionsArea = styled.div`
 const MessagesArea = styled.div`
   grid-area: messages;
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
   width: 100%;
   height: 100%;
   overflow-y: scroll;
@@ -133,29 +133,30 @@ const ChatRoom = ({ registeredUser, goToSettings, signOut }: ChatRoomProps) => {
 
         const users = await getUsers(uniqueUids);
 
-        const newMessages = messages
-          .map((msg: any) => {
-            const user = users.find((user: any) => user.uid === msg.uid);
-            if (user) {
-              return {
-                ...msg,
-                photoURL: user.avatarUrl,
-                nickname: user.nickname,
-              };
-            } else {
-              return msg;
-            }
-          })
-          .reverse();
+        const newMessages = messages.map((msg: any) => {
+          const user = users.find((user: any) => user.uid === msg.uid);
+          if (user) {
+            return {
+              ...msg,
+              photoURL: user.avatarUrl,
+              nickname: user.nickname,
+            };
+          } else {
+            return msg;
+          }
+        });
+
         setProcessedMessages(newMessages);
       }
     };
     getProcessedMessages();
   }, [messages]);
 
-  useEffect(() => {
-    messagesAreaRef.current?.scrollTo(0, messagesAreaRef.current.scrollHeight);
-  }, []);
+  // useEffect(() => {
+  //   if (messagesAreaRef.current) {
+  //     messagesAreaRef.current.scrollTo(0, messagesAreaRef.current.scrollHeight);
+  //   }
+  // }, [messagesAreaRef]);
 
   const dummy = useRef<HTMLDivElement>(null);
 

@@ -16,7 +16,7 @@ export default function Document() {
         />
         <link
           rel='stylesheet'
-          href='https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@40,700,1,0&display=swap'
+          href='https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@40,700,1,0'
         />
       </Head>
       <body>

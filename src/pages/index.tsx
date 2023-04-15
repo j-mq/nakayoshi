@@ -10,6 +10,7 @@ import { useRouter } from 'next/router';
 import { signInWithGoogle, signOutFromGoogle } from '@/firebase/auth/login';
 import styled from 'styled-components';
 import ActionButton from '@/components/ActionButton';
+import Loading from '@/components/Loading';
 
 const Container = styled.main`
   height: 100vh;
@@ -59,6 +60,8 @@ const Title = styled.h1`
 
 const auth = getAuth(firebaseApp);
 const App = () => {
+  const [firstLoading, setFirstLoading] = useState(true);
+
   const [user, loading, error] = useAuthState(auth as any);
   const router = useRouter();
 
@@ -77,6 +80,13 @@ const App = () => {
     };
     checkUserRegistration();
   }, [user, router]);
+
+  //Loading screen if no user is logged in
+  useEffect(() => {
+    if (firstLoading && !loading) {
+      setFirstLoading(false);
+    }
+  }, [loading, firstLoading]);
 
   const goToSettings = () => {
     router.push('/settings');
@@ -97,8 +107,8 @@ const App = () => {
 
   return (
     <Container>
-      {loading ? (
-        <h1>Loading...</h1>
+      {loading || firstLoading ? (
+        <Loading />
       ) : (
         <>
           {registeredUser ? (
