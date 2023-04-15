@@ -95,6 +95,31 @@ const Body = styled.div<StyleProps>`
   }
 `;
 
+const DateStamp = styled.div<StyleProps>`
+  color: inherit;
+  font-size: 12px;
+  text-align: left;
+  margin-bottom: 16px;
+  margin-left: ${(props) => (props.isSelf ? '0px' : '16px')};
+  margin-right: ${(props) => (props.isSelf ? '16px' : '0px')};
+  @media (max-width: 768px) {
+    margin-bottom: 12px;
+    margin-left: ${(props) => (props.isSelf ? '0px' : '12px')};
+    margin-right: ${(props) => (props.isSelf ? '12px' : '0px')};
+  }
+`;
+
+const Message = styled.div`
+  color: inherit;
+  font-size: 16px;
+  height: 100%;
+  max-height: 150px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+`;
+
 const Tail = styled.div<StyleProps>`
   position: absolute;
   top: -20px;
@@ -117,28 +142,6 @@ const Tail = styled.div<StyleProps>`
     right: ${(props) => (props.isSelf ? 'auto' : '-15px')};
     left: ${(props) => (props.isSelf ? '-15px' : 'auto')};
   }
-`;
-
-const DateStamp = styled.div<StyleProps>`
-  color: inherit;
-  font-size: 12px;
-  text-align: left;
-  margin-bottom: 16px;
-  margin-left: ${(props) => (props.isSelf ? '0px' : '16px')};
-  margin-right: ${(props) => (props.isSelf ? '16px' : '0px')};
-  @media (max-width: 768px) {
-    margin-bottom: 12px;
-    margin-left: ${(props) => (props.isSelf ? '0px' : '12px')};
-    margin-right: ${(props) => (props.isSelf ? '12px' : '0px')};
-  }
-`;
-
-const Message = styled.div`
-  color: inherit;
-  font-size: 16px;
-  height: 100%;
-  max-height: 150px;
-  overflow: auto;
 `;
 
 type ChatMessageProps = {

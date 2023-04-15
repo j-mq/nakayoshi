@@ -5,38 +5,58 @@ const IconButtonStyle = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  background: ${(props) => props.theme.primaryGradient};
-  padding: 16px 40px;
-  border-radius: 48px;
+
+  background: transparent;
+  padding: 0px;
   border: none;
   color: ${(props) => props.theme.primaryLighter};
   font-size: 18px;
   cursor: pointer;
-  transition: transform 150ms ease-in-out;
   font-weight: bold;
-  box-shadow: ${(props) => props.theme.dropShadow};
+
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  .material-symbols-outlined {
+    color: ${(props) => props.theme.secondary};
+    font-size: 28px;
+  }
 
   @media (min-width: 768px) {
-    :hover {
-      transform: scale(1.05);
-      background: ${(props) => props.theme.primaryLight};
+    :hover:enabled {
+      transform: scale(1.1);
     }
   }
 
-  &:active:hover {
-    transform: scale(0.95);
-    box-shadow: none;
+  :active:hover:enabled {
+    transform: scale(0.9);
+  }
+
+  :disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
   }
 `;
 
 type IconButtonProps = {
-  onClick: () => void;
   children: React.ReactNode;
+  type?: 'button' | 'submit' | 'reset';
+  disabled?: boolean;
+  onClick?: () => void;
 };
 
-const IconButton = ({ onClick, children }: IconButtonProps) => {
+const IconButton = ({ onClick, children, type, disabled }: IconButtonProps) => {
   return (
-    <IconButtonStyle className='sign-in' onClick={onClick}>
+    <IconButtonStyle
+      className='sign-in'
+      onClick={onClick}
+      type={type ? type : 'button'}
+      disabled={disabled ? disabled : false}
+    >
       <span className='material-symbols-outlined'>{children}</span>
     </IconButtonStyle>
   );

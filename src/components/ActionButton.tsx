@@ -12,7 +12,6 @@ const ActionButtonStyle = styled.button`
   color: ${(props) => props.theme.primaryLighter};
   font-size: 18px;
   cursor: pointer;
-  transition: transform 150ms ease-in-out;
   font-weight: bold;
   box-shadow: ${(props) => props.theme.dropShadow};
 
@@ -23,7 +22,7 @@ const ActionButtonStyle = styled.button`
     }
   }
 
-  &:active:hover {
+  :active:hover {
     transform: scale(0.95);
     box-shadow: none;
   }

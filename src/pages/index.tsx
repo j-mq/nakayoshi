@@ -4,8 +4,6 @@ import { getAuth } from 'firebase/auth';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import firebaseApp, { db } from '@/firebase/config';
 import ChatRoom from '../components/ChatRoom';
-import Login from '../components/Login';
-import Logout from '@/components/Logout';
 import { getUserData } from '@/firebase/collections/users';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';

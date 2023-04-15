@@ -5,7 +5,6 @@ import { db } from '@/firebase/config';
 import { addMessage } from '@/firebase/collections/messages';
 import ChatMessage from '@/components/ChatMessage';
 import { getUsers } from '@/firebase/collections/users';
-import Logout from './Logout';
 import styled from 'styled-components';
 import IconButton from './IconButton';
 
@@ -28,14 +27,12 @@ const OptionsArea = styled.div`
   gap: 16px;
   align-items: center;
   width: 100%;
-  height: 84px;
+  height: fit-content;
   background: ${(props) => props.theme.primaryLight};
   padding: 24px;
 
-  //Mobile
   @media (max-width: 768px) {
-    height: 55px;
-    padding: 8px;
+    padding: 16px;
   }
 `;
 
@@ -57,14 +54,49 @@ const InputArea = styled.div`
   justify-content: flex-end;
   align-items: center;
   width: 100%;
-  height: 84px;
+  height: fit-content;
+  max-height: 170px;
   background: ${(props) => props.theme.primaryLight};
   padding: 24px;
 
   @media (max-width: 768px) {
-    height: 55px;
-    padding: 8px;
+    padding: 16px;
+    max-height: 100px;
   }
+`;
+
+const InputForm = styled.form`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: fit-content;
+  position: relative;
+`;
+
+const MessageInput = styled.textarea`
+  width: 100%;
+  border: none;
+  height: fit-content;
+  padding: 16px 24px;
+  resize: none;
+  font-size: 16px;
+  color: ${(props) => props.theme.secondaryDarker};
+  border-radius: 12px;
+  border: 1px solid ${(props) => props.theme.secondaryDark};
+  background: ${(props) => props.theme.secondaryLighter};
+
+  :focus {
+    outline: none;
+    border: 1px solid ${(props) => props.theme.primaryDark};
+    background: ${(props) => props.theme.primaryLighter};
+    color: ${(props) => props.theme.primaryDarker};
+  }
+`;
+
+const SubmitButtonPositioner = styled.div`
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
 `;
 
 type ChatRoomProps = {
@@ -74,9 +106,10 @@ type ChatRoomProps = {
 };
 
 const ChatRoom = ({ registeredUser, goToSettings, signOut }: ChatRoomProps) => {
-  const { uid, avatarUrl, nickname } = registeredUser;
-
   const [processedMessages, setProcessedMessages] = useState<any[]>([]);
+  const [messageValue, setMessageValue] = useState<string>('');
+
+  const { uid, avatarUrl, nickname } = registeredUser;
 
   const messagesCollection = collection(db, 'messages');
   const messagesQuery = query(
@@ -115,7 +148,6 @@ const ChatRoom = ({ registeredUser, goToSettings, signOut }: ChatRoomProps) => {
             }
           })
           .reverse();
-
         setProcessedMessages(newMessages);
       }
     };
@@ -126,16 +158,14 @@ const ChatRoom = ({ registeredUser, goToSettings, signOut }: ChatRoomProps) => {
     messagesAreaRef.current?.scrollTo(0, messagesAreaRef.current.scrollHeight);
   }, []);
 
-  const [formValue, setFormValue] = useState('');
-
   const dummy = useRef<HTMLDivElement>(null);
 
   const sendMessage = async (e: any) => {
     e.preventDefault();
-    if (formValue.length > 0) {
-      await addMessage(formValue, uid, avatarUrl);
+    if (messageValue.length > 0) {
+      await addMessage(messageValue, uid, avatarUrl);
     }
-    setFormValue('');
+    setMessageValue('');
     messagesAreaRef.current?.scrollTo(0, messagesAreaRef.current.scrollHeight);
   };
 
@@ -157,14 +187,20 @@ const ChatRoom = ({ registeredUser, goToSettings, signOut }: ChatRoomProps) => {
         <div ref={dummy}></div>
       </MessagesArea>
       <InputArea>
-        <form onSubmit={sendMessage}>
-          <input
-            type='text'
-            value={formValue}
-            onChange={(e) => setFormValue(e.target.value)}
+        <InputForm onSubmit={sendMessage}>
+          <MessageInput
+            value={messageValue}
+            onChange={(e) => setMessageValue(e.target.value)}
           />
-          <button type='submit'>Send</button>
-        </form>
+          <SubmitButtonPositioner>
+            <IconButton
+              type='submit'
+              disabled={messageValue.length > 0 ? false : true}
+            >
+              Send
+            </IconButton>
+          </SubmitButtonPositioner>
+        </InputForm>
       </InputArea>
     </ChatRoomContainer>
   );

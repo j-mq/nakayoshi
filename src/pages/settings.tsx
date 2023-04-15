@@ -61,6 +61,10 @@ const UserSettings = () => {
     router.push('/');
   };
 
+  const cancelUpdate = () => {
+    router.push('/');
+  };
+
   return (
     <>
       <div>
@@ -83,6 +87,7 @@ const UserSettings = () => {
         />
       </div>
       <button onClick={updateUser}>Update</button>
+      <button onClick={cancelUpdate}>Cancel</button>
     </>
   );
 };
