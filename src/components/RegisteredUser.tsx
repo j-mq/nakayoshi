@@ -13,6 +13,10 @@ const RegisteredUserContainer = styled.div<StyleProps>`
 const TopContainer = styled.div<StyleProps>`
   display: flex;
   align-items: flex-start;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
 `;
 
 const ImageContainer = styled.div<StyleProps>`
@@ -24,6 +28,13 @@ const ImageContainer = styled.div<StyleProps>`
     props.isSelf ? props.theme.primaryDark : props.theme.secondaryDark};
 
   z-index: 3;
+
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 
   @media (max-width: 768px) {
     width: 40px;
@@ -40,9 +51,8 @@ const Image = styled.img`
 
 const NameTag = styled.div<StyleProps>`
   font-family: ${(props) => props.theme.secondaryFont};
-  height: 45px;
-  padding: ${(props) =>
-    props.isSelf ? '8px 40px 8px 16px' : '8px 16px 8px 40px'};
+  height: 32px;
+  padding: 8px 16px 8px 32px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -50,21 +60,46 @@ const NameTag = styled.div<StyleProps>`
     props.isSelf ? props.theme.primaryDark : props.theme.secondaryDark};
   color: ${(props) =>
     props.isSelf ? props.theme.primaryLighter : props.theme.secondaryLighter};
-  margin-right: ${(props) => (props.isSelf ? '-40px' : '0px')};
-  margin-left: ${(props) => (props.isSelf ? '0px' : '-40px')};
-  border-radius: ${(props) =>
-    props.isSelf ? '8px 0 0 48px' : '0 8px 48px 0px'};
+  margin-left: -32px;
+  border-radius: 0 8px 48px 0px;
   font-weight: 600;
-  font-size: 18px;
+  font-size: 14px;
+  width: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
 
   @media (max-width: 768px) {
-    height: 35px;
-    margin-right: ${(props) => (props.isSelf ? '-30px' : '0px')};
-    margin-left: ${(props) => (props.isSelf ? '0px' : '-30px')};
-    padding: ${(props) =>
-      props.isSelf ? '6px 30px 6px 12px' : '6px 12px 6px 30px'};
-    font-size: 14px;
+    display: none;
   }
+`;
+
+const Nickname = styled.div`
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const LastMessageDate = styled.div`
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+  color: ${(props) => props.theme.primaryLighter};
+  margin-top: -30px;
+  margin-left: 70px;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
+`;
+
+const LastMessageDateText = styled.span`
+  font-size: inherit;
+  color: inherit;
 `;
 
 type RegisteredUserProps = {
@@ -72,6 +107,7 @@ type RegisteredUserProps = {
   avatarUrl: string;
   uid: string;
   registeredUser: any;
+  lastMessageCreatedAt?: string;
 };
 
 const RegisteredUser = ({
@@ -79,8 +115,24 @@ const RegisteredUser = ({
   avatarUrl,
   uid,
   registeredUser,
+  lastMessageCreatedAt,
 }: RegisteredUserProps) => {
   const isSelf = uid === registeredUser.uid;
+
+  const getDate = (createdAt: any) => {
+    if (createdAt) {
+      const date = new Date(createdAt.seconds * 1000);
+      const formattedDate =
+        `${date.getFullYear()}-${date.getMonth()}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`.replace(
+          /\b(\d)\b/g,
+          '0$1'
+        );
+
+      return formattedDate;
+    } else {
+      return '';
+    }
+  };
 
   return (
     <RegisteredUserContainer isSelf={isSelf}>
@@ -88,8 +140,16 @@ const RegisteredUser = ({
         <ImageContainer isSelf={isSelf}>
           <Image src={avatarUrl} alt={`user-${uid}`}></Image>
         </ImageContainer>
-        <NameTag isSelf={isSelf}>{nickname}</NameTag>
+        <NameTag isSelf={isSelf}>
+          <Nickname>{nickname}</Nickname>
+        </NameTag>
       </TopContainer>
+      <LastMessageDate>
+        <LastMessageDateText>Last Activity:</LastMessageDateText>
+        <LastMessageDateText>
+          {getDate(lastMessageCreatedAt)}
+        </LastMessageDateText>
+      </LastMessageDate>
     </RegisteredUserContainer>
   );
 };

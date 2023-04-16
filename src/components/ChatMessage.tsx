@@ -27,6 +27,13 @@ const ImageContainer = styled.div<StyleProps>`
 
   z-index: 3;
 
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
   @media (max-width: 768px) {
     width: 70px;
     height: 70px;
@@ -162,7 +169,12 @@ const ChatMessage = ({ message, registeredUser }: ChatMessageProps) => {
   const getDate = (createdAt: any) => {
     if (createdAt) {
       const date = new Date(createdAt.seconds * 1000);
-      return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+      const formattedDate =
+        `${date.getFullYear()}-${date.getMonth()}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`.replace(
+          /\b(\d)\b/g,
+          '0$1'
+        );
+      return formattedDate;
     } else {
       return '';
     }

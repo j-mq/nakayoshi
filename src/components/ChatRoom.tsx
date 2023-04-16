@@ -52,6 +52,8 @@ const UsersArea = styled.div`
 
   @media (max-width: 768px) {
     width: 62px;
+    padding: 8px;
+    align-items: center;
   }
 `;
 
@@ -140,7 +142,7 @@ const ChatRoom = ({ registeredUser, goToSettings, signOut }: ChatRoomProps) => {
   } as any);
 
   const usersCollection = collection(db, 'users');
-  const usersQuery = query(usersCollection);
+  const usersQuery = query(usersCollection, orderBy('nickname', 'asc'));
   const [users, loadingUsers] = useCollectionData(usersQuery, {
     idField: 'id',
   } as any);
@@ -178,6 +180,20 @@ const ChatRoom = ({ registeredUser, goToSettings, signOut }: ChatRoomProps) => {
     messagesAreaRef.current?.scrollTo(0, messagesAreaRef.current.scrollHeight);
   };
 
+  const getLastMessageCreatedAtByUser = (uid: string) => {
+    if (processedMessages && processedMessages.length > 0) {
+      const messagesByUser = processedMessages.filter(
+        (msg: any) => msg.uid === uid
+      );
+      console.log('messagesByUser', messagesByUser);
+      const lastMessage = messagesByUser.sort((a: any, b: any) => {
+        return b.createdAt - a.createdAt;
+      })[0];
+      return lastMessage.createdAt;
+    }
+    return undefined;
+  };
+
   return (
     <ChatRoomContainer>
       <OptionsArea>
@@ -194,6 +210,7 @@ const ChatRoom = ({ registeredUser, goToSettings, signOut }: ChatRoomProps) => {
               key={`${user.uid}-${index}`}
               uid={user.uid}
               registeredUser={registeredUser}
+              lastMessageCreatedAt={getLastMessageCreatedAtByUser(user.uid)}
             />
           ))}
       </UsersArea>
