@@ -4,18 +4,17 @@ import { useState, useRef, useEffect } from 'react';
 import { db } from '@/firebase/config';
 import { addMessage } from '@/firebase/collections/messages';
 import ChatMessage from '@/components/ChatMessage';
-import { getUsers } from '@/firebase/collections/users';
 import styled from 'styled-components';
 import IconButton from './IconButton';
 
 const ChatRoomContainer = styled.div`
   display: grid;
   grid-template-rows: auto 1fr auto;
-  grid-template-columns: 1fr;
+  grid-template-columns: auto 1fr;
   grid-template-areas:
-    'options'
-    'messages'
-    'input';
+    'options options'
+    'users messages'
+    'input input';
   height: 100%;
   width: 100%;
 `;
@@ -35,6 +34,23 @@ const OptionsArea = styled.div`
 
   @media (max-width: 768px) {
     padding: 16px;
+  }
+`;
+
+const UsersArea = styled.div`
+  grid-area: users;
+  display: flex;
+  flex-direction: column;
+  width: 240px;
+  height: 100%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  padding: 16px;
+  gap: 16px;
+  background: ${(props) => props.theme.secondaryTransparencyGradient};
+
+  @media (max-width: 768px) {
+    width: 62px;
   }
 `;
 
@@ -107,6 +123,7 @@ type ChatRoomProps = {
 const ChatRoom = ({ registeredUser, goToSettings, signOut }: ChatRoomProps) => {
   const [processedMessages, setProcessedMessages] = useState<any[]>([]);
   const [messageValue, setMessageValue] = useState<string>('');
+  //const [allUsers, setAllUsers] = useState<any[]>([]);
 
   const { uid, avatarUrl, nickname } = registeredUser;
 
@@ -116,23 +133,21 @@ const ChatRoom = ({ registeredUser, goToSettings, signOut }: ChatRoomProps) => {
     orderBy('createdAt', 'desc'),
     limit(25)
   );
-
   const messagesAreaRef = useRef<HTMLDivElement>(null);
 
-  const [messages, loading] = useCollectionData(messagesQuery, {
+  const [messages, loadingMessages] = useCollectionData(messagesQuery, {
+    idField: 'id',
+  } as any);
+
+  const usersCollection = collection(db, 'users');
+  const usersQuery = query(usersCollection);
+  const [users, loadingUsers] = useCollectionData(usersQuery, {
     idField: 'id',
   } as any);
 
   useEffect(() => {
     const getProcessedMessages = async () => {
-      if (messages) {
-        const uids = messages.map((msg: any) => msg.uid);
-
-        // @ts-ignore
-        const uniqueUids = [...new Set(uids)];
-
-        const users = await getUsers(uniqueUids);
-
+      if (messages && users) {
         const newMessages = messages.map((msg: any) => {
           const user = users.find((user: any) => user.uid === msg.uid);
           if (user) {
@@ -150,13 +165,7 @@ const ChatRoom = ({ registeredUser, goToSettings, signOut }: ChatRoomProps) => {
       }
     };
     getProcessedMessages();
-  }, [messages]);
-
-  // useEffect(() => {
-  //   if (messagesAreaRef.current) {
-  //     messagesAreaRef.current.scrollTo(0, messagesAreaRef.current.scrollHeight);
-  //   }
-  // }, [messagesAreaRef]);
+  }, [messages, users]);
 
   const dummy = useRef<HTMLDivElement>(null);
 
@@ -175,6 +184,16 @@ const ChatRoom = ({ registeredUser, goToSettings, signOut }: ChatRoomProps) => {
         <IconButton onClick={goToSettings}>settings</IconButton>
         <IconButton onClick={signOut}>logout</IconButton>
       </OptionsArea>
+      <UsersArea>
+        {users &&
+          users.length > 0 &&
+          users.map((user: any, index: number) => (
+            <div key={user.uid}>
+              {user.nickname}
+              <span>{user.loggedIn ? 'Logged' : 'Not Logged'}</span>
+            </div>
+          ))}
+      </UsersArea>
       <MessagesArea ref={messagesAreaRef}>
         {processedMessages.length > 0 &&
           processedMessages.map((msg: any, index: number) => (

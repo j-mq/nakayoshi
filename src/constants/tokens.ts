@@ -19,6 +19,8 @@ export const theme = {
   primaryDarker: '#573434',
   primary: '#F7A6A6',
   secondary: '#8080FF',
+  secondaryTransparencyGradient:
+    'linear-gradient(180deg, rgba(135, 135, 226, 0.5) 0%, rgba(135, 135, 226, 0) 100%)',
 
   primaryDarkest: '#061324',
   overlay: 'rgba(48, 103, 159, 0.8)',
