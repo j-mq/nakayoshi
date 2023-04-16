@@ -8,13 +8,11 @@ const RegisteredUserContainer = styled.div<StyleProps>`
   display: flex;
   flex-direction: column;
   width: 100%;
-  align-items: ${(props) => (props.isSelf ? 'flex-end' : 'flex-start')};
 `;
 
 const TopContainer = styled.div<StyleProps>`
   display: flex;
   align-items: flex-start;
-  flex-direction: ${(props) => (props.isSelf ? 'row-reverse' : 'row')};
 `;
 
 const ImageContainer = styled.div<StyleProps>`
@@ -28,9 +26,8 @@ const ImageContainer = styled.div<StyleProps>`
   z-index: 3;
 
   @media (max-width: 768px) {
-    width: 70px;
-    height: 70px;
-    padding: 6px;
+    width: 40px;
+    height: 40px;
   }
 `;
 
