@@ -13,6 +13,13 @@ const EmojiPickerContainer = styled.div`
   right: 0;
   z-index: 2;
   filter: ${(props) => `drop-shadow(${props.theme.primaryDark})`};
+
+  @media (max-width: 768px) {
+    right: -66px;
+    .epr-main {
+      width: 360px !important;
+    }
+  }
 `;
 
 type EmojiButtonProps = {
