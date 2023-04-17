@@ -202,52 +202,56 @@ const ChatRoom = ({ registeredUser, goToSettings, signOut }: ChatRoomProps) => {
 
   return (
     <ChatRoomContainer>
-      <OptionsArea>
-        <IconButton onClick={goToSettings}>settings</IconButton>
-        <IconButton onClick={signOut}>logout</IconButton>
-      </OptionsArea>
-      <UsersArea>
-        {users &&
-          users.length > 0 &&
-          users.map((user: any, index: number) => (
-            <RegisteredUser
-              nickname={user.nickname}
-              avatarUrl={user.avatarUrl}
-              key={`${user.uid}-${index}`}
-              uid={user.uid}
-              registeredUser={registeredUser}
-              lastMessageCreatedAt={getLastMessageCreatedAtByUser(user.uid)}
-            />
-          ))}
-      </UsersArea>
-      <MessagesArea ref={messagesAreaRef}>
-        {processedMessages.length > 0 &&
-          processedMessages.map((msg: any, index: number) => (
-            <ChatMessage
-              key={`${msg.id}-${index}`}
-              message={msg}
-              registeredUser={registeredUser}
-            />
-          ))}
-        <div ref={dummy}></div>
-      </MessagesArea>
-      <InputArea>
-        <InputForm onSubmit={sendMessage}>
-          <MessageInput
-            aria-label='chat-message-input'
-            value={messageValue}
-            onChange={(e) => setMessageValue(e.target.value)}
-            maxLength={255}
-          />
-          <EmojiButton onEmojiClick={onEmojiClick} />
-          <IconButton
-            type='submit'
-            disabled={messageValue.length > 0 ? false : true}
-          >
-            send
-          </IconButton>
-        </InputForm>
-      </InputArea>
+      {!loadingMessages && !loadingUsers && (
+        <>
+          <OptionsArea>
+            <IconButton onClick={goToSettings}>settings</IconButton>
+            <IconButton onClick={signOut}>logout</IconButton>
+          </OptionsArea>
+          <UsersArea>
+            {users &&
+              users.length > 0 &&
+              users.map((user: any, index: number) => (
+                <RegisteredUser
+                  nickname={user.nickname}
+                  avatarUrl={user.avatarUrl}
+                  key={`${user.uid}-${index}`}
+                  uid={user.uid}
+                  registeredUser={registeredUser}
+                  lastMessageCreatedAt={getLastMessageCreatedAtByUser(user.uid)}
+                />
+              ))}
+          </UsersArea>
+          <MessagesArea ref={messagesAreaRef}>
+            {processedMessages.length > 0 &&
+              processedMessages.map((msg: any, index: number) => (
+                <ChatMessage
+                  key={`${msg.id}-${index}`}
+                  message={msg}
+                  registeredUser={registeredUser}
+                />
+              ))}
+            <div ref={dummy}></div>
+          </MessagesArea>
+          <InputArea>
+            <InputForm onSubmit={sendMessage}>
+              <MessageInput
+                aria-label='chat-message-input'
+                value={messageValue}
+                onChange={(e) => setMessageValue(e.target.value)}
+                maxLength={255}
+              />
+              <EmojiButton onEmojiClick={onEmojiClick} />
+              <IconButton
+                type='submit'
+                disabled={messageValue.length > 0 ? false : true}
+              >
+                send
+              </IconButton>
+            </InputForm>
+          </InputArea>
+        </>
+      )}
     </ChatRoomContainer>
   );
 };

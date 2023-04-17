@@ -1,6 +1,6 @@
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
-import { getAuth } from 'firebase/auth';
+import { getAuth, Auth } from 'firebase/auth';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import firebaseApp, { db } from '@/firebase/config';
 import ChatRoom from '../components/ChatRoom';
@@ -12,6 +12,7 @@ import styled from 'styled-components';
 import ActionButton from '@/components/ActionButton';
 import JumpingRabbit from '@/components/JumpingRabbit';
 import Head from 'next/head';
+import ErrorMessage from '@/components/ErrorMessage';
 
 const Container = styled.main`
   height: 100vh;
@@ -59,14 +60,15 @@ const Title = styled.h1`
   margin: 16px 0px;
 `;
 
-const auth = getAuth(firebaseApp);
-const App = () => {
-  const [firstLoading, setFirstLoading] = useState(true);
+const auth: Auth = getAuth(firebaseApp);
 
-  const [user, loading, error] = useAuthState(auth as any);
+const App = () => {
   const router = useRouter();
 
+  const [registeredUserLoading, setRegisteredUserLoading] =
+    useState<boolean>(true);
   const [registeredUser, setRegisteredUser] = useState<any>(undefined);
+  const [user, userLoading, error] = useAuthState(auth);
 
   useEffect(() => {
     const checkUserRegistration = async () => {
@@ -76,18 +78,12 @@ const App = () => {
           router.push('/settings');
         } else {
           setRegisteredUser(registeredUser);
+          setRegisteredUserLoading(false);
         }
       }
     };
     checkUserRegistration();
   }, [user, router]);
-
-  //Loading screen if no user is logged in
-  useEffect(() => {
-    if (firstLoading && !loading) {
-      setFirstLoading(false);
-    }
-  }, [loading, firstLoading]);
 
   const goToSettings = () => {
     router.push('/settings');
@@ -115,8 +111,10 @@ const App = () => {
         <link rel='icon' href='/favicon.ico' />
       </Head>
       <Container>
-        {loading || firstLoading ? (
+        {userLoading || registeredUserLoading ? (
           <JumpingRabbit type='loading' />
+        ) : error ? (
+          <ErrorMessage />
         ) : (
           <>
             {registeredUser ? (
