@@ -82,6 +82,8 @@ const App = () => {
           setRegisteredUser(registeredUser);
           setRegisteredUserLoading(false);
         }
+      } else if (!user) {
+        setRegisteredUserLoading(false);
       }
     };
     checkUserRegistration();

@@ -145,7 +145,6 @@ const UserSettings = () => {
   };
 
   const cancelUpdate = async () => {
-    router.push('/');
     if (auth.currentUser) {
       const registeredUser = await getUserData(auth.currentUser.uid);
       if (registeredUser) {
