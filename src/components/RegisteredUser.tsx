@@ -1,3 +1,4 @@
+import { formatDisplayDate } from '@/constants/utils';
 import styled from 'styled-components';
 
 type StyleProps = {
@@ -122,12 +123,7 @@ const RegisteredUser = ({
   const getDate = (createdAt: any) => {
     if (createdAt) {
       const date = new Date(createdAt.seconds * 1000);
-      const formattedDate =
-        `${date.getFullYear()}-${date.getMonth()}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`.replace(
-          /\b(\d)\b/g,
-          '0$1'
-        );
-
+      const formattedDate = formatDisplayDate(date);
       return formattedDate;
     } else {
       return '';
