@@ -7,6 +7,8 @@ import ChatMessage from '@/components/ChatMessage';
 import styled from 'styled-components';
 import IconButton from './IconButton';
 import RegisteredUser from './RegisteredUser';
+import EmojiButton from './EmojiButton';
+import { EmojiClickData } from 'emoji-picker-react';
 
 const ChatRoomContainer = styled.div`
   display: grid;
@@ -194,6 +196,10 @@ const ChatRoom = ({ registeredUser, goToSettings, signOut }: ChatRoomProps) => {
     return undefined;
   };
 
+  const onEmojiClick = (emojiData: EmojiClickData) => {
+    setMessageValue(messageValue + emojiData.emoji);
+  };
+
   return (
     <ChatRoomContainer>
       <OptionsArea>
@@ -232,11 +238,12 @@ const ChatRoom = ({ registeredUser, goToSettings, signOut }: ChatRoomProps) => {
             onChange={(e) => setMessageValue(e.target.value)}
             maxLength={255}
           />
+          <EmojiButton onEmojiClick={onEmojiClick} />
           <IconButton
             type='submit'
             disabled={messageValue.length > 0 ? false : true}
           >
-            Send
+            send
           </IconButton>
         </InputForm>
       </InputArea>
