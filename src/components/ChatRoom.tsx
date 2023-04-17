@@ -185,7 +185,7 @@ const ChatRoom = ({ registeredUser, goToSettings, signOut }: ChatRoomProps) => {
   const getLastMessageCreatedAtByUser = (uid: string) => {
     if (processedMessages && processedMessages.length > 0) {
       const messagesByUser = processedMessages.filter(
-        (msg: any) => msg.uid === uid
+        (msg: Message) => msg.uid === uid
       );
       const lastMessage = messagesByUser.sort((a: any, b: any) => {
         return b.createdAt - a.createdAt;
