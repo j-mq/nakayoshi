@@ -126,7 +126,7 @@ const UserStatus = ({
 }: UserStatusProps) => {
   const isSelf = uid === registeredUser.uid;
 
-  const getDate = (createdAt: any) => {
+  const getDate = (createdAt?: Timestamp) => {
     if (createdAt) {
       const date = new Date(createdAt.seconds * 1000);
       const formattedDate = formatDisplayDate(date);

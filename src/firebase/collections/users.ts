@@ -1,6 +1,5 @@
 import { db } from '../config';
 import {
-  getDoc,
   doc,
   collection,
   addDoc,

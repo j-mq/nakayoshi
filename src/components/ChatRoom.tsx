@@ -130,7 +130,7 @@ const ChatRoom = ({ registeredUser, goToSettings, signOut }: ChatRoomProps) => {
   const [processedMessages, setProcessedMessages] = useState<Message[]>([]);
   const [messageValue, setMessageValue] = useState<string>('');
 
-  const { uid, avatarUrl, nickname } = registeredUser;
+  const messagesAreaRef = useRef<HTMLDivElement>(null);
 
   const messagesCollection = collection(db, 'messages');
   const messagesQuery = query(
@@ -138,7 +138,6 @@ const ChatRoom = ({ registeredUser, goToSettings, signOut }: ChatRoomProps) => {
     orderBy('createdAt', 'desc'),
     limit(25)
   );
-  const messagesAreaRef = useRef<HTMLDivElement>(null);
 
   const [messages, loadingMessages] = useCollectionData(messagesQuery, {
     idField: 'id',
@@ -172,10 +171,10 @@ const ChatRoom = ({ registeredUser, goToSettings, signOut }: ChatRoomProps) => {
     getProcessedMessages();
   }, [messages, users]);
 
-  const dummy = useRef<HTMLDivElement>(null);
-
-  const sendMessage = async (e: any) => {
+  const sendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const { uid, avatarUrl } = registeredUser;
     if (messageValue.length > 0) {
       await addMessage(messageValue, uid, avatarUrl);
     }
@@ -188,7 +187,6 @@ const ChatRoom = ({ registeredUser, goToSettings, signOut }: ChatRoomProps) => {
       const messagesByUser = processedMessages.filter(
         (msg: any) => msg.uid === uid
       );
-      console.log('messagesByUser', messagesByUser);
       const lastMessage = messagesByUser.sort((a: any, b: any) => {
         return b.createdAt - a.createdAt;
       })[0];
@@ -232,7 +230,6 @@ const ChatRoom = ({ registeredUser, goToSettings, signOut }: ChatRoomProps) => {
                   registeredUser={registeredUser}
                 />
               ))}
-            <div ref={dummy}></div>
           </MessagesArea>
           <InputArea>
             <InputForm onSubmit={sendMessage}>
