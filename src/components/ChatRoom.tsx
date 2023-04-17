@@ -2,13 +2,14 @@ import { useCollectionData } from 'react-firebase-hooks/firestore';
 import { collection, query, orderBy, limit } from 'firebase/firestore';
 import { useState, useRef, useEffect } from 'react';
 import { db } from '@/firebase/config';
-import { addMessage } from '@/firebase/collections/messages';
+import { Message, addMessage } from '@/firebase/collections/messages';
 import ChatMessage from '@/components/ChatMessage';
 import styled from 'styled-components';
 import IconButton from './IconButton';
-import RegisteredUser from './RegisteredUser';
 import EmojiButton from './EmojiButton';
 import { EmojiClickData } from 'emoji-picker-react';
+import { RegisteredUser } from '@/firebase/collections/users';
+import UserStatus from './UserStatus';
 
 const ChatRoomContainer = styled.div`
   display: grid;
@@ -120,16 +121,16 @@ const MessageInput = styled.textarea`
 `;
 
 type ChatRoomProps = {
-  registeredUser: any;
+  registeredUser: RegisteredUser;
   goToSettings: () => void;
   signOut: () => void;
 };
 
 const ChatRoom = ({ registeredUser, goToSettings, signOut }: ChatRoomProps) => {
-  const [processedMessages, setProcessedMessages] = useState<any[]>([]);
+  const [processedMessages, setProcessedMessages] = useState<Message[]>([]);
   const [messageValue, setMessageValue] = useState<string>('');
 
-  const { uid, avatarUrl, nickname } = registeredUser;
+  const messagesAreaRef = useRef<HTMLDivElement>(null);
 
   const messagesCollection = collection(db, 'messages');
   const messagesQuery = query(
@@ -137,7 +138,6 @@ const ChatRoom = ({ registeredUser, goToSettings, signOut }: ChatRoomProps) => {
     orderBy('createdAt', 'desc'),
     limit(25)
   );
-  const messagesAreaRef = useRef<HTMLDivElement>(null);
 
   const [messages, loadingMessages] = useCollectionData(messagesQuery, {
     idField: 'id',
@@ -171,10 +171,10 @@ const ChatRoom = ({ registeredUser, goToSettings, signOut }: ChatRoomProps) => {
     getProcessedMessages();
   }, [messages, users]);
 
-  const dummy = useRef<HTMLDivElement>(null);
-
-  const sendMessage = async (e: any) => {
+  const sendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const { uid, avatarUrl } = registeredUser;
     if (messageValue.length > 0) {
       await addMessage(messageValue, uid, avatarUrl);
     }
@@ -185,9 +185,8 @@ const ChatRoom = ({ registeredUser, goToSettings, signOut }: ChatRoomProps) => {
   const getLastMessageCreatedAtByUser = (uid: string) => {
     if (processedMessages && processedMessages.length > 0) {
       const messagesByUser = processedMessages.filter(
-        (msg: any) => msg.uid === uid
+        (msg: Message) => msg.uid === uid
       );
-      console.log('messagesByUser', messagesByUser);
       const lastMessage = messagesByUser.sort((a: any, b: any) => {
         return b.createdAt - a.createdAt;
       })[0];
@@ -202,51 +201,55 @@ const ChatRoom = ({ registeredUser, goToSettings, signOut }: ChatRoomProps) => {
 
   return (
     <ChatRoomContainer>
-      <OptionsArea>
-        <IconButton onClick={goToSettings}>settings</IconButton>
-        <IconButton onClick={signOut}>logout</IconButton>
-      </OptionsArea>
-      <UsersArea>
-        {users &&
-          users.length > 0 &&
-          users.map((user: any, index: number) => (
-            <RegisteredUser
-              nickname={user.nickname}
-              avatarUrl={user.avatarUrl}
-              key={`${user.uid}-${index}`}
-              uid={user.uid}
-              registeredUser={registeredUser}
-              lastMessageCreatedAt={getLastMessageCreatedAtByUser(user.uid)}
-            />
-          ))}
-      </UsersArea>
-      <MessagesArea ref={messagesAreaRef}>
-        {processedMessages.length > 0 &&
-          processedMessages.map((msg: any, index: number) => (
-            <ChatMessage
-              key={`${msg.id}-${index}`}
-              message={msg}
-              registeredUser={registeredUser}
-            />
-          ))}
-        <div ref={dummy}></div>
-      </MessagesArea>
-      <InputArea>
-        <InputForm onSubmit={sendMessage}>
-          <MessageInput
-            value={messageValue}
-            onChange={(e) => setMessageValue(e.target.value)}
-            maxLength={255}
-          />
-          <EmojiButton onEmojiClick={onEmojiClick} />
-          <IconButton
-            type='submit'
-            disabled={messageValue.length > 0 ? false : true}
-          >
-            send
-          </IconButton>
-        </InputForm>
-      </InputArea>
+      {!loadingMessages && !loadingUsers && (
+        <>
+          <OptionsArea>
+            <IconButton onClick={goToSettings}>settings</IconButton>
+            <IconButton onClick={signOut}>logout</IconButton>
+          </OptionsArea>
+          <UsersArea>
+            {users &&
+              users.length > 0 &&
+              users.map((user: any, index: number) => (
+                <UserStatus
+                  nickname={user.nickname}
+                  avatarUrl={user.avatarUrl}
+                  key={`${user.uid}-${index}`}
+                  uid={user.uid}
+                  registeredUser={registeredUser}
+                  lastMessageCreatedAt={getLastMessageCreatedAtByUser(user.uid)}
+                />
+              ))}
+          </UsersArea>
+          <MessagesArea ref={messagesAreaRef}>
+            {processedMessages.length > 0 &&
+              processedMessages.map((msg: any, index: number) => (
+                <ChatMessage
+                  key={`${msg.id}-${index}`}
+                  message={msg}
+                  registeredUser={registeredUser}
+                />
+              ))}
+          </MessagesArea>
+          <InputArea>
+            <InputForm onSubmit={sendMessage}>
+              <MessageInput
+                aria-label='chat-message-input'
+                value={messageValue}
+                onChange={(e) => setMessageValue(e.target.value)}
+                maxLength={255}
+              />
+              <EmojiButton onEmojiClick={onEmojiClick} />
+              <IconButton
+                type='submit'
+                disabled={messageValue.length > 0 ? false : true}
+              >
+                send
+              </IconButton>
+            </InputForm>
+          </InputArea>
+        </>
+      )}
     </ChatRoomContainer>
   );
 };

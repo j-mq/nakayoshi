@@ -1,6 +1,5 @@
 import { db } from '../config';
 import {
-  getDoc,
   doc,
   collection,
   addDoc,
@@ -14,13 +13,19 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 const usersCollection = collection(db, 'users');
 
+export type RegisteredUser = {
+  uid: string;
+  nickname: string;
+  avatarUrl: string;
+};
+
 export const getUserData = async (uid: string) => {
   const user = await getDocs(query(usersCollection, where('uid', '==', uid)));
 
   if (user.empty) {
     return undefined;
   } else {
-    const userData = user.docs[0].data();
+    const userData = user.docs[0].data() as RegisteredUser;
     return userData;
   }
 };

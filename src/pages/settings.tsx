@@ -1,8 +1,4 @@
-import {
-  getUserData,
-  updateOrCreateUser,
-  uploadAvatar,
-} from '@/firebase/collections/users';
+import { getUserData, updateOrCreateUser } from '@/firebase/collections/users';
 import firebaseApp from '@/firebase/config';
 import { getAuth } from 'firebase/auth';
 import React, { useEffect, useState } from 'react';
@@ -11,6 +7,7 @@ import styled from 'styled-components';
 import ActionButton from '@/components/ActionButton';
 import IconButton from '@/components/IconButton';
 import { signOutFromGoogle } from '@/firebase/auth/login';
+import Head from 'next/head';
 
 const Container = styled.main`
   height: 100vh;
@@ -92,7 +89,6 @@ const UserSettings = () => {
 
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
-  //Check if user is logged in else redirect to index
   useEffect(() => {
     const checkUserRegistration = async () => {
       if (auth.currentUser) {
@@ -100,7 +96,6 @@ const UserSettings = () => {
 
         if (!registeredUser) {
           const { uid, photoURL, displayName } = auth.currentUser as any;
-          console.log('the user data', uid, photoURL, displayName);
           setAvatarURL(photoURL);
           setNickname(displayName);
           setUserId(uid);
@@ -150,7 +145,6 @@ const UserSettings = () => {
   };
 
   const cancelUpdate = async () => {
-    router.push('/');
     if (auth.currentUser) {
       const registeredUser = await getUserData(auth.currentUser.uid);
       if (registeredUser) {
@@ -169,34 +163,47 @@ const UserSettings = () => {
   };
 
   return (
-    <Container>
-      <Content>
-        <AvatarContainer>
-          <Avatar src={avatarURL} alt={`user-${userId}`}></Avatar>
-          <FileInput
-            id='avatar'
-            type='file'
-            accept='image/png, image/jpeg'
-            onChange={updateAvatarURL}
-            ref={fileInputRef}
+    <>
+      <Head>
+        <title>Nakayoshi Settings</title>
+        <meta name='description' content='Chat with your friends and family' />
+        <meta name='viewport' content='width=device-width, initial-scale=1' />
+        <link rel='icon' href='/favicon.ico' />
+      </Head>
+      <Container>
+        <Content>
+          <AvatarContainer>
+            <Avatar src={avatarURL} alt={`user-${userId}`}></Avatar>
+            <FileInput
+              id='avatar'
+              type='file'
+              accept='image/png, image/jpeg'
+              onChange={updateAvatarURL}
+              ref={fileInputRef}
+            />
+            <IconButtonPositioner>
+              <IconButton onClick={uploadAvatar}>
+                add_photo_alternate
+              </IconButton>
+            </IconButtonPositioner>
+          </AvatarContainer>
+          <NicknameInput
+            id='nickname'
+            type='text'
+            value={nickname}
+            onChange={changeNickname}
+            maxLength={30}
           />
-          <IconButtonPositioner>
-            <IconButton onClick={uploadAvatar}>add_photo_alternate</IconButton>
-          </IconButtonPositioner>
-        </AvatarContainer>
-        <NicknameInput
-          id='nickname'
-          type='text'
-          value={nickname}
-          onChange={changeNickname}
-          maxLength={30}
-        />
-        <ActionButton onClick={updateUser} disabled={isUpdateButtonDisabled()}>
-          Update
-        </ActionButton>
-        <ActionButton onClick={cancelUpdate}>Cancel</ActionButton>
-      </Content>
-    </Container>
+          <ActionButton
+            onClick={updateUser}
+            disabled={isUpdateButtonDisabled()}
+          >
+            Update
+          </ActionButton>
+          <ActionButton onClick={cancelUpdate}>Cancel</ActionButton>
+        </Content>
+      </Container>
+    </>
   );
 };
 

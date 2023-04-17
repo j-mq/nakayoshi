@@ -1,4 +1,6 @@
 import { formatDisplayDate } from '@/constants/utils';
+import { RegisteredUser } from '@/firebase/collections/users';
+import { Timestamp } from 'firebase/firestore';
 import styled from 'styled-components';
 
 type StyleProps = {
@@ -76,6 +78,9 @@ const NameTag = styled.div<StyleProps>`
       props.isSelf ? '6px 30px 6px 12px' : '6px 12px 6px 30px'};
     font-size: 14px;
   }
+  text-shadow: 0 0 3px
+    ${(props) =>
+      props.isSelf ? props.theme.primaryDarker : props.theme.secondaryDarker};
 `;
 
 const Body = styled.div<StyleProps>`
@@ -159,15 +164,15 @@ type ChatMessageProps = {
     uid: string;
     photoURL: string;
     nickname: string;
-    createdAt: any;
+    createdAt: Timestamp;
   };
-  registeredUser: any;
+  registeredUser: RegisteredUser;
 };
 
 const ChatMessage = ({ message, registeredUser }: ChatMessageProps) => {
   const { text, uid, photoURL, nickname, createdAt } = message;
 
-  const getDate = (createdAt: any) => {
+  const getDate = (createdAt: Timestamp) => {
     if (createdAt) {
       const date = new Date(createdAt.seconds * 1000);
       const formattedDate = formatDisplayDate(date);

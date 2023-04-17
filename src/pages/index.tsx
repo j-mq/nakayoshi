@@ -1,16 +1,18 @@
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
-import { getAuth } from 'firebase/auth';
+import { getAuth, Auth } from 'firebase/auth';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import firebaseApp, { db } from '@/firebase/config';
 import ChatRoom from '../components/ChatRoom';
-import { getUserData } from '@/firebase/collections/users';
+import { RegisteredUser, getUserData } from '@/firebase/collections/users';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { signInWithGoogle, signOutFromGoogle } from '@/firebase/auth/login';
 import styled from 'styled-components';
 import ActionButton from '@/components/ActionButton';
 import JumpingRabbit from '@/components/JumpingRabbit';
+import Head from 'next/head';
+import ErrorMessage from '@/components/ErrorMessage';
 
 const Container = styled.main`
   height: 100vh;
@@ -58,14 +60,17 @@ const Title = styled.h1`
   margin: 16px 0px;
 `;
 
-const auth = getAuth(firebaseApp);
-const App = () => {
-  const [firstLoading, setFirstLoading] = useState(true);
+const auth: Auth = getAuth(firebaseApp);
 
-  const [user, loading, error] = useAuthState(auth as any);
+const App = () => {
   const router = useRouter();
 
-  const [registeredUser, setRegisteredUser] = useState<any>(undefined);
+  const [registeredUserLoading, setRegisteredUserLoading] =
+    useState<boolean>(true);
+  const [registeredUser, setRegisteredUser] = useState<
+    RegisteredUser | undefined
+  >(undefined);
+  const [user, userLoading, error] = useAuthState(auth);
 
   useEffect(() => {
     const checkUserRegistration = async () => {
@@ -75,18 +80,14 @@ const App = () => {
           router.push('/settings');
         } else {
           setRegisteredUser(registeredUser);
+          setRegisteredUserLoading(false);
         }
+      } else if (!user) {
+        setRegisteredUserLoading(false);
       }
     };
     checkUserRegistration();
   }, [user, router]);
-
-  //Loading screen if no user is logged in
-  useEffect(() => {
-    if (firstLoading && !loading) {
-      setFirstLoading(false);
-    }
-  }, [loading, firstLoading]);
 
   const goToSettings = () => {
     router.push('/settings');
@@ -106,29 +107,39 @@ const App = () => {
   };
 
   return (
-    <Container>
-      {loading || firstLoading ? (
-        <JumpingRabbit type='loading' />
-      ) : (
-        <>
-          {registeredUser ? (
-            <ChatRoom
-              registeredUser={registeredUser}
-              goToSettings={goToSettings}
-              signOut={signOut}
-            />
-          ) : (
-            <IntroContainer>
-              <Logo>
-                <JumpingRabbit type='title' />
-              </Logo>
-              <Title>Nakayoshi</Title>
-              <ActionButton onClick={signIn}>Login</ActionButton>
-            </IntroContainer>
-          )}
-        </>
-      )}
-    </Container>
+    <>
+      <Head>
+        <title>Nakayoshi</title>
+        <meta name='description' content='Chat with your friends and family' />
+        <meta name='viewport' content='width=device-width, initial-scale=1' />
+        <link rel='icon' href='/favicon.ico' />
+      </Head>
+      <Container>
+        {userLoading || registeredUserLoading ? (
+          <JumpingRabbit type='loading' />
+        ) : error ? (
+          <ErrorMessage />
+        ) : (
+          <>
+            {registeredUser ? (
+              <ChatRoom
+                registeredUser={registeredUser}
+                goToSettings={goToSettings}
+                signOut={signOut}
+              />
+            ) : (
+              <IntroContainer>
+                <Logo>
+                  <JumpingRabbit type='title' />
+                </Logo>
+                <Title>Nakayoshi</Title>
+                <ActionButton onClick={signIn}>Login</ActionButton>
+              </IntroContainer>
+            )}
+          </>
+        )}
+      </Container>
+    </>
   );
 };
 

@@ -1,11 +1,13 @@
 import { formatDisplayDate } from '@/constants/utils';
+import { RegisteredUser } from '@/firebase/collections/users';
+import { Timestamp } from 'firebase/firestore';
 import styled from 'styled-components';
 
 type StyleProps = {
   isSelf: boolean;
 };
 
-const RegisteredUserContainer = styled.div<StyleProps>`
+const UserStatusContainer = styled.div<StyleProps>`
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -73,6 +75,10 @@ const NameTag = styled.div<StyleProps>`
   @media (max-width: 768px) {
     display: none;
   }
+
+  text-shadow: 0 0 3px
+    ${(props) =>
+      props.isSelf ? props.theme.primaryDarker : props.theme.secondaryDarker};
 `;
 
 const Nickname = styled.div`
@@ -103,24 +109,24 @@ const LastMessageDateText = styled.span`
   color: inherit;
 `;
 
-type RegisteredUserProps = {
+type UserStatusProps = {
   nickname: string;
   avatarUrl: string;
   uid: string;
-  registeredUser: any;
-  lastMessageCreatedAt?: string;
+  registeredUser: RegisteredUser;
+  lastMessageCreatedAt?: Timestamp;
 };
 
-const RegisteredUser = ({
+const UserStatus = ({
   nickname,
   avatarUrl,
   uid,
   registeredUser,
   lastMessageCreatedAt,
-}: RegisteredUserProps) => {
+}: UserStatusProps) => {
   const isSelf = uid === registeredUser.uid;
 
-  const getDate = (createdAt: any) => {
+  const getDate = (createdAt?: Timestamp) => {
     if (createdAt) {
       const date = new Date(createdAt.seconds * 1000);
       const formattedDate = formatDisplayDate(date);
@@ -131,7 +137,7 @@ const RegisteredUser = ({
   };
 
   return (
-    <RegisteredUserContainer isSelf={isSelf}>
+    <UserStatusContainer isSelf={isSelf}>
       <TopContainer isSelf={isSelf}>
         <ImageContainer isSelf={isSelf}>
           <Image src={avatarUrl} alt={`user-${uid}`}></Image>
@@ -146,8 +152,8 @@ const RegisteredUser = ({
           {getDate(lastMessageCreatedAt)}
         </LastMessageDateText>
       </LastMessageDate>
-    </RegisteredUserContainer>
+    </UserStatusContainer>
   );
 };
 
-export default RegisteredUser;
+export default UserStatus;
