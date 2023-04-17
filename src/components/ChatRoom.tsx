@@ -79,15 +79,13 @@ const InputArea = styled.div`
   align-items: center;
   width: 100%;
   height: fit-content;
-  max-height: 170px;
   background: ${(props) => props.theme.primaryLight};
   padding: 24px;
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
   z-index: 3;
 
   @media (max-width: 768px) {
-    padding: 16px;
-    max-height: 100px;
+    padding: 16px 16px 66px 16px;
   }
 `;
 
@@ -188,9 +186,13 @@ const ChatRoom = ({ registeredUser, goToSettings, signOut }: ChatRoomProps) => {
         (msg: Message) => msg.uid === uid
       );
       const lastMessage = messagesByUser.sort((a: any, b: any) => {
-        return b.createdAt - a.createdAt;
+        return b.createdAt.seconds - a.createdAt.seconds;
       })[0];
-      return lastMessage.createdAt;
+      if (lastMessage) {
+        return lastMessage.createdAt;
+      } else {
+        return undefined;
+      }
     }
     return undefined;
   };

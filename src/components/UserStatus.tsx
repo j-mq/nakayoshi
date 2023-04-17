@@ -146,12 +146,14 @@ const UserStatus = ({
           <Nickname>{nickname}</Nickname>
         </NameTag>
       </TopContainer>
-      <LastMessageDate>
-        <LastMessageDateText>Last Activity:</LastMessageDateText>
-        <LastMessageDateText>
-          {getDate(lastMessageCreatedAt)}
-        </LastMessageDateText>
-      </LastMessageDate>
+      {lastMessageCreatedAt && (
+        <LastMessageDate>
+          <LastMessageDateText>Last Activity:</LastMessageDateText>
+          <LastMessageDateText>
+            {getDate(lastMessageCreatedAt)}
+          </LastMessageDateText>
+        </LastMessageDate>
+      )}
     </UserStatusContainer>
   );
 };
