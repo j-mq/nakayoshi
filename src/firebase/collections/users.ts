@@ -60,22 +60,3 @@ export const uploadAvatar = async (file: File) => {
 
   return downloadURL;
 };
-
-export const updateLoggedInStatus = async (uid: string, status: boolean) => {
-  const user = await getDocs(query(usersCollection, where('uid', '==', uid)));
-  if (user.docs[0] && user.docs[0].data()) {
-    await updateDoc(doc(usersCollection, user.docs[0].id), {
-      loggedIn: status,
-    });
-  }
-};
-
-export const listenForLoggedInStatus = async () => {
-  const users = await getDocs(usersCollection);
-  users.forEach((user) => {
-    const userData = user.data();
-    if (userData.loggedIn) {
-      updateLoggedInStatus(userData.uid, false);
-    }
-  });
-};
