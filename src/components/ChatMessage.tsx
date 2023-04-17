@@ -76,6 +76,9 @@ const NameTag = styled.div<StyleProps>`
       props.isSelf ? '6px 30px 6px 12px' : '6px 12px 6px 30px'};
     font-size: 14px;
   }
+  text-shadow: 0 0 3px
+    ${(props) =>
+      props.isSelf ? props.theme.primaryDarker : props.theme.secondaryDarker};
 `;
 
 const Body = styled.div<StyleProps>`

@@ -11,6 +11,7 @@ import styled from 'styled-components';
 import ActionButton from '@/components/ActionButton';
 import IconButton from '@/components/IconButton';
 import { signOutFromGoogle } from '@/firebase/auth/login';
+import Head from 'next/head';
 
 const Container = styled.main`
   height: 100vh;
@@ -169,34 +170,47 @@ const UserSettings = () => {
   };
 
   return (
-    <Container>
-      <Content>
-        <AvatarContainer>
-          <Avatar src={avatarURL} alt={`user-${userId}`}></Avatar>
-          <FileInput
-            id='avatar'
-            type='file'
-            accept='image/png, image/jpeg'
-            onChange={updateAvatarURL}
-            ref={fileInputRef}
+    <>
+      <Head>
+        <title>Nakayoshi Settings</title>
+        <meta name='description' content='Chat with your friends and family' />
+        <meta name='viewport' content='width=device-width, initial-scale=1' />
+        <link rel='icon' href='/favicon.ico' />
+      </Head>
+      <Container>
+        <Content>
+          <AvatarContainer>
+            <Avatar src={avatarURL} alt={`user-${userId}`}></Avatar>
+            <FileInput
+              id='avatar'
+              type='file'
+              accept='image/png, image/jpeg'
+              onChange={updateAvatarURL}
+              ref={fileInputRef}
+            />
+            <IconButtonPositioner>
+              <IconButton onClick={uploadAvatar}>
+                add_photo_alternate
+              </IconButton>
+            </IconButtonPositioner>
+          </AvatarContainer>
+          <NicknameInput
+            id='nickname'
+            type='text'
+            value={nickname}
+            onChange={changeNickname}
+            maxLength={30}
           />
-          <IconButtonPositioner>
-            <IconButton onClick={uploadAvatar}>add_photo_alternate</IconButton>
-          </IconButtonPositioner>
-        </AvatarContainer>
-        <NicknameInput
-          id='nickname'
-          type='text'
-          value={nickname}
-          onChange={changeNickname}
-          maxLength={30}
-        />
-        <ActionButton onClick={updateUser} disabled={isUpdateButtonDisabled()}>
-          Update
-        </ActionButton>
-        <ActionButton onClick={cancelUpdate}>Cancel</ActionButton>
-      </Content>
-    </Container>
+          <ActionButton
+            onClick={updateUser}
+            disabled={isUpdateButtonDisabled()}
+          >
+            Update
+          </ActionButton>
+          <ActionButton onClick={cancelUpdate}>Cancel</ActionButton>
+        </Content>
+      </Container>
+    </>
   );
 };
 

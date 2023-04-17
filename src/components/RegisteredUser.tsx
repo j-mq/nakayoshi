@@ -73,6 +73,10 @@ const NameTag = styled.div<StyleProps>`
   @media (max-width: 768px) {
     display: none;
   }
+
+  text-shadow: 0 0 3px
+    ${(props) =>
+      props.isSelf ? props.theme.primaryDarker : props.theme.secondaryDarker};
 `;
 
 const Nickname = styled.div`

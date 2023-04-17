@@ -11,6 +11,7 @@ import { signInWithGoogle, signOutFromGoogle } from '@/firebase/auth/login';
 import styled from 'styled-components';
 import ActionButton from '@/components/ActionButton';
 import JumpingRabbit from '@/components/JumpingRabbit';
+import Head from 'next/head';
 
 const Container = styled.main`
   height: 100vh;
@@ -106,29 +107,37 @@ const App = () => {
   };
 
   return (
-    <Container>
-      {loading || firstLoading ? (
-        <JumpingRabbit type='loading' />
-      ) : (
-        <>
-          {registeredUser ? (
-            <ChatRoom
-              registeredUser={registeredUser}
-              goToSettings={goToSettings}
-              signOut={signOut}
-            />
-          ) : (
-            <IntroContainer>
-              <Logo>
-                <JumpingRabbit type='title' />
-              </Logo>
-              <Title>Nakayoshi</Title>
-              <ActionButton onClick={signIn}>Login</ActionButton>
-            </IntroContainer>
-          )}
-        </>
-      )}
-    </Container>
+    <>
+      <Head>
+        <title>Nakayoshi</title>
+        <meta name='description' content='Chat with your friends and family' />
+        <meta name='viewport' content='width=device-width, initial-scale=1' />
+        <link rel='icon' href='/favicon.ico' />
+      </Head>
+      <Container>
+        {loading || firstLoading ? (
+          <JumpingRabbit type='loading' />
+        ) : (
+          <>
+            {registeredUser ? (
+              <ChatRoom
+                registeredUser={registeredUser}
+                goToSettings={goToSettings}
+                signOut={signOut}
+              />
+            ) : (
+              <IntroContainer>
+                <Logo>
+                  <JumpingRabbit type='title' />
+                </Logo>
+                <Title>Nakayoshi</Title>
+                <ActionButton onClick={signIn}>Login</ActionButton>
+              </IntroContainer>
+            )}
+          </>
+        )}
+      </Container>
+    </>
   );
 };
 

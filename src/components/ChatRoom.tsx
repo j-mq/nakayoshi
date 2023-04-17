@@ -234,6 +234,7 @@ const ChatRoom = ({ registeredUser, goToSettings, signOut }: ChatRoomProps) => {
       <InputArea>
         <InputForm onSubmit={sendMessage}>
           <MessageInput
+            aria-label='chat-message-input'
             value={messageValue}
             onChange={(e) => setMessageValue(e.target.value)}
             maxLength={255}
