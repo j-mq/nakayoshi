@@ -1,3 +1,4 @@
+import { formatDisplayDate } from '@/constants/utils';
 import styled from 'styled-components';
 
 type StyleProps = {
@@ -26,6 +27,13 @@ const ImageContainer = styled.div<StyleProps>`
     props.isSelf ? props.theme.primaryDark : props.theme.secondaryDark};
 
   z-index: 3;
+
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 
   @media (max-width: 768px) {
     width: 70px;
@@ -162,7 +170,8 @@ const ChatMessage = ({ message, registeredUser }: ChatMessageProps) => {
   const getDate = (createdAt: any) => {
     if (createdAt) {
       const date = new Date(createdAt.seconds * 1000);
-      return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+      const formattedDate = formatDisplayDate(date);
+      return formattedDate;
     } else {
       return '';
     }

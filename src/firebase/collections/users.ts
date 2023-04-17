@@ -25,33 +25,6 @@ export const getUserData = async (uid: string) => {
   }
 };
 
-export const getUsers = async (uids: string[]) => {
-  const CHUNK_SIZE = 10;
-
-  // Split the array into chunks of 10 because Firebase has a limit of 10
-  const chunks = [];
-  for (let i = 0; i < uids.length; i += CHUNK_SIZE) {
-    const chunk = uids.slice(i, i + CHUNK_SIZE);
-    chunks.push(chunk);
-  }
-
-  const promises = chunks.map(async (chunk) => {
-    const users = await getDocs(
-      query(usersCollection, where('uid', 'in', chunk))
-    );
-    if (users.empty) {
-      return [];
-    } else {
-      const usersData = users.docs.map((user) => user.data());
-      return usersData;
-    }
-  });
-
-  const results = await Promise.all(promises);
-
-  return results.flat();
-};
-
 export const updateOrCreateUser = async (
   uid: string,
   nickname: string,
@@ -86,4 +59,23 @@ export const uploadAvatar = async (file: File) => {
   const downloadURL = await getDownloadURL(snapshot.ref);
 
   return downloadURL;
+};
+
+export const updateLoggedInStatus = async (uid: string, status: boolean) => {
+  const user = await getDocs(query(usersCollection, where('uid', '==', uid)));
+  if (user.docs[0] && user.docs[0].data()) {
+    await updateDoc(doc(usersCollection, user.docs[0].id), {
+      loggedIn: status,
+    });
+  }
+};
+
+export const listenForLoggedInStatus = async () => {
+  const users = await getDocs(usersCollection);
+  users.forEach((user) => {
+    const userData = user.data();
+    if (userData.loggedIn) {
+      updateLoggedInStatus(userData.uid, false);
+    }
+  });
 };

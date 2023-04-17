@@ -25,11 +25,13 @@ const ActionButtonStyle = styled.button`
   :active:hover:enabled {
     transform: scale(0.95);
     box-shadow: none;
+    background: ${(props) => props.theme.primaryDark};
   }
 
   :disabled {
     cursor: not-allowed;
     opacity: 0.5;
+    box-shadow: none;
   }
 `;
 

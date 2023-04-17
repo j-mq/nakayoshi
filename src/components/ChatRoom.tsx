@@ -4,18 +4,18 @@ import { useState, useRef, useEffect } from 'react';
 import { db } from '@/firebase/config';
 import { addMessage } from '@/firebase/collections/messages';
 import ChatMessage from '@/components/ChatMessage';
-import { getUsers } from '@/firebase/collections/users';
 import styled from 'styled-components';
 import IconButton from './IconButton';
+import RegisteredUser from './RegisteredUser';
 
 const ChatRoomContainer = styled.div`
   display: grid;
   grid-template-rows: auto 1fr auto;
-  grid-template-columns: 1fr;
+  grid-template-columns: auto 1fr;
   grid-template-areas:
-    'options'
-    'messages'
-    'input';
+    'options options'
+    'users messages'
+    'input input';
   height: 100%;
   width: 100%;
 `;
@@ -35,6 +35,25 @@ const OptionsArea = styled.div`
 
   @media (max-width: 768px) {
     padding: 16px;
+  }
+`;
+
+const UsersArea = styled.div`
+  grid-area: users;
+  display: flex;
+  flex-direction: column;
+  width: 240px;
+  height: 100%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  padding: 16px;
+  gap: 16px;
+  background: ${(props) => props.theme.secondaryTransparencyGradient};
+
+  @media (max-width: 768px) {
+    width: 62px;
+    padding: 8px;
+    align-items: center;
   }
 `;
 
@@ -116,23 +135,21 @@ const ChatRoom = ({ registeredUser, goToSettings, signOut }: ChatRoomProps) => {
     orderBy('createdAt', 'desc'),
     limit(25)
   );
-
   const messagesAreaRef = useRef<HTMLDivElement>(null);
 
-  const [messages, loading] = useCollectionData(messagesQuery, {
+  const [messages, loadingMessages] = useCollectionData(messagesQuery, {
+    idField: 'id',
+  } as any);
+
+  const usersCollection = collection(db, 'users');
+  const usersQuery = query(usersCollection, orderBy('nickname', 'asc'));
+  const [users, loadingUsers] = useCollectionData(usersQuery, {
     idField: 'id',
   } as any);
 
   useEffect(() => {
     const getProcessedMessages = async () => {
-      if (messages) {
-        const uids = messages.map((msg: any) => msg.uid);
-
-        // @ts-ignore
-        const uniqueUids = [...new Set(uids)];
-
-        const users = await getUsers(uniqueUids);
-
+      if (messages && users) {
         const newMessages = messages.map((msg: any) => {
           const user = users.find((user: any) => user.uid === msg.uid);
           if (user) {
@@ -150,13 +167,7 @@ const ChatRoom = ({ registeredUser, goToSettings, signOut }: ChatRoomProps) => {
       }
     };
     getProcessedMessages();
-  }, [messages]);
-
-  // useEffect(() => {
-  //   if (messagesAreaRef.current) {
-  //     messagesAreaRef.current.scrollTo(0, messagesAreaRef.current.scrollHeight);
-  //   }
-  // }, [messagesAreaRef]);
+  }, [messages, users]);
 
   const dummy = useRef<HTMLDivElement>(null);
 
@@ -169,12 +180,40 @@ const ChatRoom = ({ registeredUser, goToSettings, signOut }: ChatRoomProps) => {
     messagesAreaRef.current?.scrollTo(0, messagesAreaRef.current.scrollHeight);
   };
 
+  const getLastMessageCreatedAtByUser = (uid: string) => {
+    if (processedMessages && processedMessages.length > 0) {
+      const messagesByUser = processedMessages.filter(
+        (msg: any) => msg.uid === uid
+      );
+      console.log('messagesByUser', messagesByUser);
+      const lastMessage = messagesByUser.sort((a: any, b: any) => {
+        return b.createdAt - a.createdAt;
+      })[0];
+      return lastMessage.createdAt;
+    }
+    return undefined;
+  };
+
   return (
     <ChatRoomContainer>
       <OptionsArea>
         <IconButton onClick={goToSettings}>settings</IconButton>
         <IconButton onClick={signOut}>logout</IconButton>
       </OptionsArea>
+      <UsersArea>
+        {users &&
+          users.length > 0 &&
+          users.map((user: any, index: number) => (
+            <RegisteredUser
+              nickname={user.nickname}
+              avatarUrl={user.avatarUrl}
+              key={`${user.uid}-${index}`}
+              uid={user.uid}
+              registeredUser={registeredUser}
+              lastMessageCreatedAt={getLastMessageCreatedAtByUser(user.uid)}
+            />
+          ))}
+      </UsersArea>
       <MessagesArea ref={messagesAreaRef}>
         {processedMessages.length > 0 &&
           processedMessages.map((msg: any, index: number) => (

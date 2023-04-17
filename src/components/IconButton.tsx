@@ -4,14 +4,12 @@ const IconButtonStyle = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-
-  background: transparent;
-  padding: 0px;
+  background: ${(props) => props.theme.secondaryGradient};
   border: none;
-  color: ${(props) => props.theme.primaryLighter};
-  font-size: 18px;
+  padding: 8px;
+  border-radius: 50%;
   cursor: pointer;
-  font-weight: bold;
+  box-shadow: ${(props) => props.theme.dropShadow};
 
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -21,23 +19,27 @@ const IconButtonStyle = styled.button`
   user-select: none;
 
   .material-symbols-outlined {
-    color: ${(props) => props.theme.secondary};
-    font-size: 28px;
+    color: ${(props) => props.theme.secondaryLighter};
+    font-size: 24px;
   }
 
   @media (min-width: 768px) {
     :hover:enabled {
-      transform: scale(1.1);
+      transform: scale(1.05);
+      background: ${(props) => props.theme.secondaryLight};
     }
   }
 
   :active:hover:enabled {
     transform: scale(0.9);
+    box-shadow: none;
+    background: ${(props) => props.theme.secondaryDark};
   }
 
   :disabled {
     cursor: not-allowed;
     opacity: 0.5;
+    box-shadow: none;
   }
 `;
 

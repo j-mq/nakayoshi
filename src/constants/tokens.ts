@@ -9,7 +9,7 @@ export const theme = {
   dropShadow: '0px 4px 8px rgba(0, 0, 0, 0.25)',
 
   primaryDark: '#D98181',
-  secondaryDark: '#7F7FD3',
+  secondaryDark: '#7171C8',
 
   secondaryLighter: '#F2F2FF',
 
@@ -19,11 +19,8 @@ export const theme = {
   primaryDarker: '#573434',
   primary: '#F7A6A6',
   secondary: '#8080FF',
+  secondaryTransparencyGradient:
+    'linear-gradient(180deg, rgba(135, 135, 226, 0.5) 0%, rgba(135, 135, 226, 0) 100%)',
 
-  primaryDarkest: '#061324',
-  overlay: 'rgba(48, 103, 159, 0.8)',
-  overlayDark: 'rgba(6, 19, 36, 0.75)',
-  shadowLevel2: '0px 4px 8px rgba(0, 0, 0, 0.50)',
-  shadowLevel3: '0px 8px 16px rgba(0, 0, 0, 0.75)',
-  shadowLevel4: '0px 16px 32px rgba(0, 0, 0, 0.80)',
+  secondaryGradient: 'linear-gradient(180deg, #8080FF 0%, #7171C8 100%)',
 };
