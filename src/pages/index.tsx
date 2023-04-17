@@ -4,7 +4,7 @@ import { getAuth, Auth } from 'firebase/auth';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import firebaseApp, { db } from '@/firebase/config';
 import ChatRoom from '../components/ChatRoom';
-import { getUserData } from '@/firebase/collections/users';
+import { RegisteredUser, getUserData } from '@/firebase/collections/users';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { signInWithGoogle, signOutFromGoogle } from '@/firebase/auth/login';
@@ -67,7 +67,9 @@ const App = () => {
 
   const [registeredUserLoading, setRegisteredUserLoading] =
     useState<boolean>(true);
-  const [registeredUser, setRegisteredUser] = useState<any>(undefined);
+  const [registeredUser, setRegisteredUser] = useState<
+    RegisteredUser | undefined
+  >(undefined);
   const [user, userLoading, error] = useAuthState(auth);
 
   useEffect(() => {

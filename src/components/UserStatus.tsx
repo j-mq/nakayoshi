@@ -1,11 +1,13 @@
 import { formatDisplayDate } from '@/constants/utils';
+import { RegisteredUser } from '@/firebase/collections/users';
+import { Timestamp } from 'firebase/firestore';
 import styled from 'styled-components';
 
 type StyleProps = {
   isSelf: boolean;
 };
 
-const RegisteredUserContainer = styled.div<StyleProps>`
+const UserStatusContainer = styled.div<StyleProps>`
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -107,21 +109,21 @@ const LastMessageDateText = styled.span`
   color: inherit;
 `;
 
-type RegisteredUserProps = {
+type UserStatusProps = {
   nickname: string;
   avatarUrl: string;
   uid: string;
-  registeredUser: any;
-  lastMessageCreatedAt?: string;
+  registeredUser: RegisteredUser;
+  lastMessageCreatedAt?: Timestamp;
 };
 
-const RegisteredUser = ({
+const UserStatus = ({
   nickname,
   avatarUrl,
   uid,
   registeredUser,
   lastMessageCreatedAt,
-}: RegisteredUserProps) => {
+}: UserStatusProps) => {
   const isSelf = uid === registeredUser.uid;
 
   const getDate = (createdAt: any) => {
@@ -135,7 +137,7 @@ const RegisteredUser = ({
   };
 
   return (
-    <RegisteredUserContainer isSelf={isSelf}>
+    <UserStatusContainer isSelf={isSelf}>
       <TopContainer isSelf={isSelf}>
         <ImageContainer isSelf={isSelf}>
           <Image src={avatarUrl} alt={`user-${uid}`}></Image>
@@ -150,8 +152,8 @@ const RegisteredUser = ({
           {getDate(lastMessageCreatedAt)}
         </LastMessageDateText>
       </LastMessageDate>
-    </RegisteredUserContainer>
+    </UserStatusContainer>
   );
 };
 
-export default RegisteredUser;
+export default UserStatus;

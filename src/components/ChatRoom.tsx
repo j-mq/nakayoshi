@@ -2,13 +2,14 @@ import { useCollectionData } from 'react-firebase-hooks/firestore';
 import { collection, query, orderBy, limit } from 'firebase/firestore';
 import { useState, useRef, useEffect } from 'react';
 import { db } from '@/firebase/config';
-import { addMessage } from '@/firebase/collections/messages';
+import { Message, addMessage } from '@/firebase/collections/messages';
 import ChatMessage from '@/components/ChatMessage';
 import styled from 'styled-components';
 import IconButton from './IconButton';
-import RegisteredUser from './RegisteredUser';
 import EmojiButton from './EmojiButton';
 import { EmojiClickData } from 'emoji-picker-react';
+import { RegisteredUser } from '@/firebase/collections/users';
+import UserStatus from './UserStatus';
 
 const ChatRoomContainer = styled.div`
   display: grid;
@@ -120,13 +121,13 @@ const MessageInput = styled.textarea`
 `;
 
 type ChatRoomProps = {
-  registeredUser: any;
+  registeredUser: RegisteredUser;
   goToSettings: () => void;
   signOut: () => void;
 };
 
 const ChatRoom = ({ registeredUser, goToSettings, signOut }: ChatRoomProps) => {
-  const [processedMessages, setProcessedMessages] = useState<any[]>([]);
+  const [processedMessages, setProcessedMessages] = useState<Message[]>([]);
   const [messageValue, setMessageValue] = useState<string>('');
 
   const { uid, avatarUrl, nickname } = registeredUser;
@@ -212,7 +213,7 @@ const ChatRoom = ({ registeredUser, goToSettings, signOut }: ChatRoomProps) => {
             {users &&
               users.length > 0 &&
               users.map((user: any, index: number) => (
-                <RegisteredUser
+                <UserStatus
                   nickname={user.nickname}
                   avatarUrl={user.avatarUrl}
                   key={`${user.uid}-${index}`}
